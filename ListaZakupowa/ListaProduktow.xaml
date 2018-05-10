@@ -1,0 +1,103 @@
+﻿<Page
+    x:Class="ListaZakupowa.ListaProduktow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ListaZakupowa"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Loaded="uiPage_Loaded">
+
+    <Page.Resources>
+        <!--Use a collection view source for content that presents a list of items that can be grouped or sorted.-->
+        <CollectionViewSource x:Key="ItemyGrp" x:Name="ItemyGrp" IsSourceGrouped="True" />
+        <!-- IsSourceGrouped="True"-->
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Stretch" >
+
+        <ListView x:Name="ListItemsSklepu" Margin="5,5,5,5" HorizontalContentAlignment="Stretch" ItemsSource="{Binding Source={StaticResource ItemyGrp}}" >
+            <!-- ItemsSource="{Binding Source={StaticResource ItemyGrp}}" -->
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment"  Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid HorizontalAlignment="Stretch" Margin="0,5,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*"/>
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock FontSize="20" Grid.Row="0" Grid.Column="0" Text="{Binding Nazwa, Mode=OneWay }" Visibility="{Binding ShowTBlock, Mode=OneWay}" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding Zalatwione, Mode=TwoWay}"  /> 
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Info, Mode=OneWay }"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Cena, Mode=OneWay }"/>
+                        <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding Nazwa, Mode=TwoWay }" Visibility="{Binding ShowTBox, Mode=OneWay}"/>
+
+                        <Grid.ContextFlyout>
+                                <MenuFlyout>
+                                <MenuFlyoutItem x:Uid="resEdit" Text="Edit" Click="uiItemEdit_Click"  />
+                                <MenuFlyoutItem x:Uid="resRemove" Text="Remove" Click="uiItemRemove_Click"  />
+                                </MenuFlyout>
+                        </Grid.ContextFlyout>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+            <ListView.GroupStyle >
+                <GroupStyle HidesIfEmpty="True" >
+                    <GroupStyle.HeaderContainerStyle>
+                        <Style TargetType="ListViewHeaderItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewHeaderItem">
+                                        <ContentPresenter HorizontalAlignment="Stretch"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.HeaderContainerStyle>
+
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel Background="LightGray" HorizontalAlignment="Stretch" >
+                                <TextBlock Text="{Binding Miejsce, Mode=OneWay }" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+
+            </ListView.GroupStyle>
+        </ListView>
+    </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar ClosedDisplayMode="Minimal" >
+            <AppBarButton Icon="Back" x:Uid="resBack" Label="Back" Click="uiGoMain_Click" />
+            <AppBarButton Icon="Refresh" x:Uid="resRefresh" Label="Refresh" Click="uiRefresh_Click"  />
+            <AppBarButton Icon="Download" x:Uid="resImport" Label="Import"  AllowFocusOnInteraction="True" >
+                <AppBarButton.Flyout>
+                    <Flyout x:Name="uiImportFlyout">
+                        <StackPanel>
+                            <TextBox x:Name="uiImportText" Header="Import" PlaceholderText="(wklej tekst XML lub podaj link)" IsSpellCheckEnabled="False" AcceptsReturn="True" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                            <Button Content="Go!" HorizontalAlignment="Stretch" Margin="10,5,10,5" Click="uiImport_Click"  />
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+
+            </AppBarButton>
+            <AppBarButton x:Name="uiExport" x:Uid="resExport" Icon="Save" Label="Export" Visibility="Collapsed" />
+            <AppBarButton x:Name="uiAdd" x:Uid="resAdd" Icon="Add" Label="Add" Click="uiAddItem_Click" />
+
+        </CommandBar>
+
+    </Page.BottomAppBar>
+</Page>

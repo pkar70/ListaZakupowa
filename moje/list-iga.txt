@@ -1,0 +1,23 @@
+jab³ka|01 warzywniak||
+cebula|01 warzywniak||1.19
+gruszki|01 warzywniak||
+chleb|02 pieczywo||
+bu³ki|02 pieczywo||
+papier toaletowy|03 k¹cik miêsny|Mola 8 rolek|5.29
+dezodorant|04 kosmetyki||
+szampon|04 kosmetyki||
+zupa mro¿onka|05 mrozonki|hortex wiosenna, 4.49 do 4.79|4.79
+ser bia³y|05 mrozonki||
+cukier|06 ty³||1.99
+andruty|06 ty³|podp³omyki 5.19, kwadratowe 160g 2.99|
+musztarda|07 alejka 1||
+ocet|07 alejka 1||
+makaron|07 alejka 1||
+paluszki|08 alejka 2||
+kefir|05 mrozonki|butelkowany: 1.55 (czasem 1.65), krasnystaw 1.79|
+zapiekanka|05 mrozonki|220 g, 4.49 zl, 18 pc pieczarki; Lidl 235 g, 29 pc pieczarek, 19 pc ser - 3.99|4.49
+tuñczyk|07 alejka 1|rozdrobiony w sosie w³asnym|3.29
+prince polo|08 alejka 2||1.29
+naleœniki|05 mrozonki||
+d¿em|05 mrozonki||
+kostki zupowe|07 alejka 1||

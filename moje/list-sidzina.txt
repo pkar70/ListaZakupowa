@@ -1,0 +1,24 @@
+teksasy|01 ubranie||
+koszula msza|01 ubranie||
+okulary|01 ubranie||
+adidasy|01 ubranie||
+sanda³y|01 ubranie||
+krótkie spodenki|01 ubranie||
+³adowarka telefon|02 technika||
+latarka|02 technika||
+laptop+TV dongle|02 technika||
+aparat|02 technika||
+koszula flanelowa|01 ubranie||
+kapelusz|01 ubranie||
+kindle|02 technika||
+smogometr|02 technika||
+aero2|02 technika||
+pi¿ama|01 ubranie||
+rêcznik|03 inne||
+pigu³ki|03 inne||
+meridol|03 inne||
+fenistil|03 inne||
+Kontrola konta Lyca|02 technika||
+kbd BT|02 technika||
+zaciemnienie|03 inne|na drzwi, +pinezki do mocowania. Wysokosc: 1 m x szerokosc: 75 cm|
+dalmierz|02 technika|do sprawdzenia odl pawilon-dom|

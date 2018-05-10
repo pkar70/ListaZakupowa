@@ -1,0 +1,44 @@
+﻿<Page
+    x:Class="ListaZakupowa.EditItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ListaZakupowa"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Loaded="uiPage_Loaded">
+                      
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel Margin="10,20,10,10">
+            <TextBox x:Name="uiNazwa" HorizontalAlignment="Center" FontSize="20" />
+            <TextBlock x:Name="uiSklep" FontSize="10" />
+            <Rectangle Height="2" HorizontalAlignment="Stretch" Margin="5,10,5,10" />
+            <!-- <TextBox x:Name="uiMiejsce" Header="Miejsce"/> -->
+            <TextBlock x:Uid="resMiejsce" Text="Miejsce" />
+            <ComboBox x:Name="uiMiejsca" HorizontalAlignment="Stretch" />
+            <TextBox x:Name="uiInfo" x:Uid="resInfo" Header="Info" />
+            <TextBox x:Name="uiCena" x:Uid="resCena" Header="Cena" InputScope="CurrencyAmount" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" />
+            <Button Content="OK" HorizontalAlignment="Center" Margin="10,20,10,0" Click="uiOK_Click"/>
+        </StackPanel>
+    </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar ClosedDisplayMode="Minimal" >
+            <AppBarButton Icon="Cancel" x:Uid="resCancel" Label="Cancel" Click="uiCancel_Click"  />
+            <AppBarSeparator/>
+            <AppBarButton Icon="Add" x:Uid="resAddCatAP" Label="Add category" AllowFocusOnInteraction="True">
+                <AppBarButton.Flyout>
+                    <Flyout x:Name="uiAddCatFlyout">
+                        <StackPanel>
+                            <TextBox x:Name="uiAddCat" x:Uid="resAddCat" Header="Nazwa" PlaceholderText="(podaj nazwę)" IsSpellCheckEnabled="False" />
+                            <Button Content="Add" x:Uid="resAddCatButton" HorizontalAlignment="Stretch" Margin="10,5,10,5" Click="uiAddCat_Click"   />
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+
+            </AppBarButton>
+
+        </CommandBar>
+
+    </Page.BottomAppBar>
+
+</Page>

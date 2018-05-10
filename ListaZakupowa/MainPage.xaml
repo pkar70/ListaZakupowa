@@ -1,0 +1,51 @@
+﻿<Page
+    x:Class="ListaZakupowa.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ListaZakupowa"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Loaded="UIpage_Loaded">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+            <ListView x:Name="ListItems" Margin="5,5,5,5">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock FontSize="20" Text="{Binding Nazwa, Mode=OneWay }" Tapped="uiShop_Tapped" >
+                                <TextBlock.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem x:Uid="resOpenShopList" Text="Open shopping list" Click="uiShopContext_Click"  />
+                                        <MenuFlyoutItem x:Uid="resRemove" Text="Remove" Click="uiShopRemove_Click" />
+                                    </MenuFlyout>
+                                </TextBlock.ContextFlyout>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
+
+    </Grid>
+
+    
+    <Page.BottomAppBar>
+        <CommandBar ClosedDisplayMode="Minimal" >
+            <AppBarButton Icon="Refresh" x:Uid="resRefresh" Label="Refresh" Click="uiRefresh_Click" />
+            <AppBarButton x:Name="uiAdd" x:Uid="resAdd" Icon="Add" Label="Add" AllowFocusOnInteraction="True">
+                <AppBarButton.Flyout>
+                    <Flyout x:Name="uiAddSklepFlyout">
+                        <StackPanel>
+                            <TextBox x:Uid="resSklepName" x:Name="uiAddSklep" Header="Nazwa" PlaceholderText="(podaj nazwę)" IsSpellCheckEnabled="False" />
+                            <Button x:Uid="resAddButton" Content="Add" HorizontalAlignment="Stretch" Margin="10,5,10,5" Click="uiAddSklep_Click"  />
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+
+            </AppBarButton>
+        </CommandBar>
+
+    </Page.BottomAppBar>
+
+</Page>

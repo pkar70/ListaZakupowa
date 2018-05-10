@@ -1,0 +1,9 @@
+﻿Do dodania:
+1. sortowanie sklepów po nazwie?
+
+
+Już zrobione:
+2. del list ALA, create list ALA - pozostaje lista jak wcześniej, bo plik nie jest kasowany. Zapytać "czy chcesz przywrócić starą czy od nowa?"
+
+Zauważone błędy:
+1. jakby nie zawsze zapisuje dane po edycji? a przynajmniej coś niespójnego jest...

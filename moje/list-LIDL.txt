@@ -1,0 +1,33 @@
+czekolada|01 pieczywo|nadziewana|1.49
+herbata|01 pieczywo||-1
+chleb|01 pieczywo||-1
+bu³ki|01 pieczywo|wiejska|0.69
+minipizza|01 pieczywo||-1
+ananas|02 warzywa||-1
+kukurydza|02 warzywa||-1
+gruszki|02 warzywa||-1
+kalarepa|02 warzywa||-1
+danie miêsiwo|02 warzywa||-1
+ogórki konserwowe|02 warzywa|Chira, 450g|3.65
+naleœniki|03 mroznki1|300g|4.99
+danie makaron|03 mroznki1|300g|5.99
+zapiekanka|03 mroznki1|235 g, 29 pc pieczarek, 19 pc ser; Iga: 220 g, 4.49 zl, 18 pc pieczarki|3.991
+parówki|03 mroznki1|200g|2.69
+kabanos|03 mroznki1|100g|3.79
+sa³atka warzywna|03 mroznki1||-1
+cheesburger|03 mroznki1||5.19
+cordon bleu|03 mroznki1||3.49
+kie³basa|03 mroznki1|24.5 za kg Taurus krucha, 29.90 za kg Swojska|24.5
+sertop|03 mroznki1||1.29
+ser ¿ó³ty kostka|03 mroznki1|Carski 4.69 za 250g, Edam 4.39 za 250g|4.69
+ser ¿ó³ty plasterki|03 mroznki1|500g|9.45
+ser Mozarella|03 mroznki1|100g|2.45
+ser bia³y|04 nabial|t³usty - lepszy trójk¹t ni¿ kó³ko|-1
+ser homo|04 nabial|300g, nie Mascarpone (md³y)|3.69
+kefir|04 nabial||-1
+jogurt|04 nabial|400g|1.15
+prince polo|05 wnetrze 1||1.39
+danie kubek|05 wnetrze 1||1.99
+myd³o filler|06 wnetrze 2|litr|2.69
+jajka|05 wnetrze 1|wolny wybieg 6 szt|4.79
+œmietana|04 nabial|12% s³odka do jedzenia, 18% do ciast - jako serek homo, ale nie jest s³odka|
