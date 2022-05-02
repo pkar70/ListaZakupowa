@@ -1,0 +1,24 @@
+
+* moze jakas klasa, ze SettingsDate(sNazwa = "default"), i na niej operacje compareTo itp.?
+* albo GetSettingsDate, odpowiednik SetSettingsDate (w sensie ten sam format) 
+
+* Export, submenu: email, clip, OneDrive (wysyła i podaje link, do wyslania chocby SMSem)
+* pliki OneDrive "always accessible" (czy jakoś tak)
+
+
+---- ZMIANY we wszystkich app -- ZMIANY we wszystkich app -------------
+
+5) dla Uno, zrobienie tak by działało RemoteSystems (w App.cs)
+ [cel: żeby przechodząc do Uno nie tracić funkcjonalności]
+
+8) WinUI 2 (nuget Microsoft.UI.XAML)
+ [cel: ładniejsze czasem]
+
+11) migracja rzeczy z *vb/*cs do vblib/vb
+ [cel1: uratowanie kodu VB przy migracji do Uno]
+ [cel2: ułatwienie przy migracji do MAUI]
+
+ jako Private inVb As new vblib.[klasa], z możliwością przekazania parametrów (choćby delegated do czegoś) w ctor
+
+16) aktualizacja Nugetow
+

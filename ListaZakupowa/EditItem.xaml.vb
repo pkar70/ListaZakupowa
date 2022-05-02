@@ -1,147 +1,74 @@
-﻿' The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+﻿Imports vb14 = VBlib.pkarlibmodule14
 
-''' <summary>
-''' An empty page that can be used on its own or navigated to within a Frame.
-''' </summary>
 Public NotInheritable Class EditItem
     Inherits Page
 
-    Dim bComboFilled As Boolean = False
+    Private _bAdding As Boolean = False ' true gdy dodajemy, false gdy edytujemy
 
-    Protected Overrides Sub onNavigatedTo(e As NavigationEventArgs)
-        uiSklep.Text = App.msNazwaSklepu
-        Dim sTxt As String = e.Parameter.ToString ' uiMiejsca
+    Private Sub FillComboMiejsc(sCurrent As String)
 
         uiMiejsca.Items.Clear()
 
-        Dim oCBItem As ComboBoxItem
-        Dim aMsc As String() = sTxt.Split("|")
-        For Each sMsc As String In aMsc
-            If sMsc.Length > 1 Then
-                oCBItem = New ComboBoxItem
-                oCBItem.Content = sMsc
-                uiMiejsca.Items.Add(oCBItem)
-            End If
+        Dim oCBItem As New ComboBoxItem
+
+        For Each sGrp As String In From c In App.moBazaSklepu.GetList Select c.Miejsce Distinct
+            oCBItem = New ComboBoxItem
+            oCBItem.Content = sGrp
+            If sGrp = sCurrent Then oCBItem.IsSelected = True
+            uiMiejsca.Items.Add(oCBItem)
         Next
 
-        bComboFilled = True
-        'oCBItem = New ComboBoxItem
-        'oCBItem.Content = "--add new"
-        'uiMiejsca.Items.Add(oCBItem)
+        oCBItem = New ComboBoxItem
+        oCBItem.Content = "--" & vb14.GetLangString("msgAddNewGroip")
+        uiMiejsca.Items.Add(oCBItem)
 
     End Sub
 
-    Private Sub uiOK_Click(sender As Object, e As RoutedEventArgs)
+    Private Async Sub uiOK_Click(sender As Object, e As RoutedEventArgs)
         If uiNazwa.Text.Length < 2 Then
-            App.DialogBoxRes("errNameTooShort")
+            vb14.DialogBoxRes("errNameTooShort")
             Exit Sub
         End If
 
-        Dim bError As Boolean = False
-        Dim sError As String = ""
+        Dim bChanged As Boolean = False
 
-        Try
-            App.oItemek.Nazwa = uiNazwa.Text
-            ' App.oItemek.Miejsce = uiMiejsce.Text
-            App.oItemek.Info = uiInfo.Text
-            App.oItemek.Cena = uiCena.Text
-        Catch ex As Exception
-            App.DialogBoxError(1, ex.Message)
-            Exit Sub
-        End Try
+        If App.moEditingItem.Nazwa <> uiNazwa.Text Then bChanged = True
+        If App.moEditingItem.Info <> uiInfo.Text Then bChanged = True
+        If App.moEditingItem.Cena <> uiCena.Text Then bChanged = True
 
-        'If bError Then
-        '    App.DialogBoxError(sError)
-        '    Exit Sub
-        'End If
+        App.moEditingItem.Nazwa = uiNazwa.Text
+        App.moEditingItem.Info = uiInfo.Text
+        App.moEditingItem.Cena = uiCena.Text
 
-        Try
-            Dim iTmp As Integer = uiMiejsca.SelectedIndex
-            If iTmp < 0 Then
-                App.oItemek.Miejsce = ""
-            Else
-                ' Dim sTxt As String = uiMiejsca.Items.ElementAt(iTmp).Content
-                ' App.oItemek.Miejsce = sTxt
-                App.oItemek.Miejsce = uiMiejsca.SelectionBoxItem
-            End If
-        Catch ex As Exception
-            App.DialogBoxError(2, ex.Message)
-            Exit Sub
-            'sError = ex.Message
-            'bError = True
-        End Try
+        Dim oCBI As ComboBoxItem = TryCast(uiMiejsca.SelectedItem, ComboBoxItem)
+        Dim sTmp As String = If(oCBI?.Content?.ToString, "")
+        If App.moEditingItem.Miejsce <> sTmp Then bChanged = True
+        App.moEditingItem.Miejsce = sTmp
 
-        'If bError Then
-        '    App.DialogBoxError(sError)
-        '    Exit Sub
-        'End If
+        ' gdy edytujemy, to przecież edytujemy obiekt, powinno być od razu widać zmianę w App.moBazaSklepu
+        ' więc nie trzeba żadnych podmian na liście
 
-        App.mbReadFromApp = True
+        If _bAdding Then App.moBazaSklepu.Add(App.moEditingItem)
+
+        If _bAdding OrElse bChanged Then Await App.moBazaSklepu.SaveAsync()
+
         Me.Frame.GoBack()
-
     End Sub
 
-    Private Async Sub uiPage_Loaded(sender As Object, e As RoutedEventArgs)
-        uiSklep.Text = App.msNazwaSklepu
-        uiNazwa.Text = If(App.oItemek.Nazwa Is Nothing, "", App.oItemek.Nazwa)
-        uiInfo.Text = If(App.oItemek.Info, "")  ' to jest to samo co wyzej :)
-        uiCena.Text = If(App.oItemek.Cena, "")
-        ' uiMiejsce.Text = If(App.oItemek.Miejsce Is Nothing, "", App.oItemek.Miejsce)
+    Private Sub uiPage_Loaded(sender As Object, e As RoutedEventArgs)
+        uiSklep.Text = App.moBazaSklepu.NazwaSklepu
 
-        Dim sTxt As String = ""
-        If App.oItemek.Miejsce IsNot Nothing Then
-            sTxt = App.oItemek.Miejsce
-        End If
+        uiNazwa.Text = App.moEditingItem.Nazwa
+        uiInfo.Text = App.moEditingItem.Info
+        uiCena.Text = App.moEditingItem.Cena
 
-        ' moze to spowoduje ze nie bedzie crash przy Edit - a tak sie zdarzylo testerom Microsoft
-        ' zas w Internet mozna znalezc ze jest problem przy zmianie Combo gdy sie go jednoczesnie laduje
-        Dim iGuard As Integer = 10
-        While iGuard < 10 And Not bComboFilled
-            iGuard += 1
-            Await Task.Delay(10)
-        End While
+        _bAdding = (uiNazwa.Text = "")
 
+        FillComboMiejsc(App.moEditingItem.Miejsce)
 
-        If sTxt <> "" Then
-            Dim i As Integer
-            Try
-                Dim iMax As Integer = uiMiejsca.Items.Count
-                ' Debug.WriteLine("W comboboxie jest itemow " & iMax.ToString)
-
-                App.IgnoreLangOn()
-
-                For i = 0 To uiMiejsca.Items.Count - 1      ' Dim As jest wyzej
-                    ' Debug.WriteLine(uiMiejsca.Items.ElementAt(i).Content)
-                    If uiMiejsca.Items.ElementAt(i).Content = sTxt Then
-                        uiMiejsca.SelectedIndex = i
-                        Exit For
-                    End If
-                Next
-                App.IgnoreLangOff()
-
-            Catch ex As Exception
-                App.DialogBoxError(3, ex.Message)
-            End Try
-        End If
-
-    End Sub
-
-    Private Sub uiMiejsca_Changed(sender As Object, e As SelectionChangedEventArgs) Handles uiMiejsca.SelectionChanged
-        Dim iInd As Integer = uiMiejsca.SelectedIndex
-        ' 20180602: mi też error(4) przy edycji takiego bez kategorii?
-        If iInd < 0 Then Exit Sub
-
-        Try
-            App.IgnoreLangOn()
-            App.oItemek.Miejsce = uiMiejsca.Items.ElementAt(iInd).Content
-            App.IgnoreLangOff()
-        Catch ex As Exception
-            App.DialogBoxError(4, ex.Message)
-        End Try
     End Sub
 
     Private Sub uiCancel_Click(sender As Object, e As RoutedEventArgs)
-        App.mbReadFromApp = False
         Me.Frame.GoBack()
     End Sub
 
@@ -149,7 +76,7 @@ Public NotInheritable Class EditItem
         Dim sName As String = uiAddCat.Text
         If sName.Length < 2 Then Exit Sub
 
-        Dim oCBItem As ComboBoxItem = New ComboBoxItem
+        Dim oCBItem As New ComboBoxItem
         oCBItem.Content = sName
         uiMiejsca.Items.Add(oCBItem)
 

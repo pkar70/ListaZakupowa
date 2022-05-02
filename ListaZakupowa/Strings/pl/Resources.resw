@@ -222,4 +222,31 @@
   <data name="errAnyError" xml:space="preserve">
     <value>Wystąpił błąd</value>
   </data>
+  <data name="msgDeleteFromOneDrive" xml:space="preserve">
+    <value>Skasować dane z OneDrive? Jeśli tego nie zrobisz, to jak później ponownie włączysz OneDrive to dane z niego nadpiszą dane lokalne.</value>
+  </data>
+  <data name="msgExportRoamToOneDrive" xml:space="preserve">
+    <value>Przesłać teraz dane do OneDrive?</value>
+  </data>
+  <data name="uiMainSetting.Label" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+  <data name="uiOneDrive.Header" xml:space="preserve">
+    <value>Używaj OneDrive</value>
+  </data>
+  <data name="uiSetupTitle.Text" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+  <data name="uiSklepySort.Header" xml:space="preserve">
+    <value>Sortowanie listy sklepów</value>
+  </data>
+  <data name="uiSklepySort.OffContent" xml:space="preserve">
+    <value>w kolejności dodawania</value>
+  </data>
+  <data name="uiSklepySort.OnContent" xml:space="preserve">
+    <value>według nazwy</value>
+  </data>
+  <data name="uiStartImport.Content" xml:space="preserve">
+    <value>Importuj</value>
+  </data>
 </root>

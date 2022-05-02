@@ -5,7 +5,7 @@
     xmlns:local="using:ListaZakupowa"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" Loaded="UIpage_Loaded">
+    mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
@@ -13,14 +13,15 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <TextBlock FontSize="20" Text="{Binding Nazwa, Mode=OneWay }" Tapped="uiShop_Tapped" >
-                                <TextBlock.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem x:Uid="resOpenShopList" Text="Open shopping list" Click="uiShopContext_Click"  />
-                                        <MenuFlyoutItem x:Uid="resRemove" Text="Remove" Click="uiShopRemove_Click" />
-                                    </MenuFlyout>
-                                </TextBlock.ContextFlyout>
-                            </TextBlock>
+                            <Grid>
+                            <TextBlock FontSize="20" Text="{Binding Nazwa, Mode=OneWay }" Tapped="uiShop_Tapped" />
+                            <Grid.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem x:Uid="resOpenShopList" Text="Open shopping list" Click="uiShopContext_Click"  />
+                                    <MenuFlyoutItem x:Uid="resRemove" Text="Remove" Click="uiShopRemove_Click" />
+                                </MenuFlyout>
+                            </Grid.ContextFlyout>
+                            </Grid>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -32,18 +33,30 @@
     
     <Page.BottomAppBar>
         <CommandBar ClosedDisplayMode="Minimal" >
-            <AppBarButton Icon="Refresh" x:Uid="resRefresh" Label="Refresh" Click="uiRefresh_Click" />
-            <AppBarButton x:Name="uiAdd" x:Uid="resAdd" Icon="Add" Label="Add" AllowFocusOnInteraction="True">
+            <AppBarButton Icon="Download" x:Uid="resImport" Label="Import"  AllowFocusOnInteraction="True" >
                 <AppBarButton.Flyout>
+                    <Flyout x:Name="uiImportFlyout">
+                        <StackPanel>
+                            <TextBox x:Name="uiImportText" Header="Import" PlaceholderText="(wklej tekst XML lub podaj link)" IsSpellCheckEnabled="False" AcceptsReturn="True" MaxHeight="300" Height="300" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                            <Button Content="Go!" HorizontalAlignment="Stretch" Margin="10,5,10,5" Click="uiImport_Click" x:Uid="uiStartImport"  />
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+                </AppBarButton> 
+            <AppBarButton x:Name="uiAdd" x:Uid="resAdd" Icon="Add" Label="Add" AllowFocusOnInteraction="True" Click="uiAddSklep_Click">
+                <!--<AppBarButton.Flyout>
                     <Flyout x:Name="uiAddSklepFlyout">
                         <StackPanel>
                             <TextBox x:Uid="resSklepName" x:Name="uiAddSklep" Header="Nazwa" PlaceholderText="(podaj nazwę)" IsSpellCheckEnabled="False" />
                             <Button x:Uid="resAddButton" Content="Add" HorizontalAlignment="Stretch" Margin="10,5,10,5" Click="uiAddSklep_Click"  />
                         </StackPanel>
                     </Flyout>
-                </AppBarButton.Flyout>
+                </AppBarButton.Flyout>-->
 
             </AppBarButton>
+            <AppBarSeparator Name="uiAppBarSeparat"/>
+            <AppBarButton Icon="Refresh" x:Uid="resRefresh" Label="Refresh" Click="uiRefresh_Click" />
+            <AppBarButton Icon="Setting" x:Uid="uiMainSetting" Label="Settings" Click="uiGoSettings_Click" />
         </CommandBar>
 
     </Page.BottomAppBar>

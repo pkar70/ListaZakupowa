@@ -117,130 +117,106 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="resEdit.Text" xml:space="preserve">
-    <value>Edit</value>
-  </data>
-  <data name="resRemove.Text" xml:space="preserve">
-    <value>Remove</value>
-  </data>
-  <data name="resBack.Label" xml:space="preserve">
-    <value>Back</value>
-  </data>
-  <data name="resRefresh.Label" xml:space="preserve">
-    <value>Refresh</value>
-  </data>
-  <data name="resImport.Label" xml:space="preserve">
-    <value>Import</value>
-  </data>
-  <data name="resExport.Label" xml:space="preserve">
-    <value>Export</value>
-  </data>
-  <data name="resAdd.Label" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="resOpenShopList.Text" xml:space="preserve">
-    <value>Open shopping list</value>
-  </data>
-  <data name="resSklepName.Header" xml:space="preserve">
-    <value>Shop name</value>
-  </data>
-  <data name="resSklepName.PlaceholderText" xml:space="preserve">
-    <value>(enter shop name)</value>
-  </data>
-  <data name="resAddButton.Content" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="resMiejsce.Text" xml:space="preserve">
-    <value>Zone</value>
-  </data>
-  <data name="resInfo.Header" xml:space="preserve">
-    <value>Info</value>
-  </data>
-  <data name="resCena.Header" xml:space="preserve">
-    <value>Price</value>
-  </data>
-  <data name="resCancel.Label" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="resAddCatAP.Label" xml:space="preserve">
-    <value>Add zone</value>
-  </data>
-  <data name="resAddCat.Header" xml:space="preserve">
-    <value>Zone</value>
-  </data>
-  <data name="resAddCat.PlaceholderText" xml:space="preserve">
-    <value>(enter zone name)</value>
-  </data>
-  <data name="resAddCatButton.Content" xml:space="preserve">
-    <value>Add</value>
+  <data name="errAnyError" xml:space="preserve">
+    <value>Wystąpił błąd</value>
   </data>
   <data name="errCannotImportXML" xml:space="preserve">
-    <value>ERROR: cannot import XML</value>
+    <value>BŁĄD konwersji XML</value>
   </data>
   <data name="errCSVempty" xml:space="preserve">
-    <value>ERROR: CSV import, no lines imported</value>
+    <value>BŁAD: nie wczytano żadnej linii z pliku CSV</value>
   </data>
   <data name="errCSVnoLine" xml:space="preserve">
-    <value>ERROR: CSV import, single line input?</value>
+    <value>BŁAD: brak zmiany linii w pliku CSV</value>
   </data>
   <data name="errHttpError" xml:space="preserve">
-    <value>ERROR: getting http content error</value>
+    <value>BŁAD ściągania danych z http</value>
   </data>
   <data name="errNameTooShort" xml:space="preserve">
-    <value>ERROR: name too short</value>
+    <value>BŁAD: nazwa za krótka</value>
+  </data>
+  <data name="errNieudanySaveListyItemow" xml:space="preserve">
+    <value>Nie udało się zapisać listy zakupów w sklepie</value>
+  </data>
+  <data name="errNieudanySaveListySklepow" xml:space="preserve">
+    <value>Nie udało się zapisać listy sklepów</value>
   </data>
   <data name="errNoRoamFolder" xml:space="preserve">
-    <value>SYSERROR: No roaming folder?</value>
+    <value>Błąd dostępu do katalogu Roaming</value>
+  </data>
+  <data name="errNoRoamFolder1" xml:space="preserve">
+    <value>BŁĄD: nie ma folderu roaming?</value>
   </data>
   <data name="errTooShortImport" xml:space="preserve">
-    <value>ERROR: too short for import</value>
+    <value>BŁĄD: za krótki tekst na import</value>
   </data>
   <data name="errUnknownFormat" xml:space="preserve">
-    <value>ERROR: uknown format</value>
-  </data>
-  <data name="msgExportClip" xml:space="preserve">
-    <value>Export is in Clipboard</value>
+    <value>BŁĄD: nieznany format dla importu</value>
   </data>
   <data name="manifestAppName" xml:space="preserve">
-    <value>UWP Shopping List</value>
+    <value>Listy zakupowe</value>
+  </data>
+  <data name="msgAddNewGroip" xml:space="preserve">
+    <value>dodaj nowy</value>
+  </data>
+  <data name="msgCancelSklep" xml:space="preserve">
+    <value>Jednak nie...</value>
+  </data>
+  <data name="msgConflictModifiedODandLocal" xml:space="preserve">
+    <value>Dane zostały zmienione zarówno lokalnie jak i w Cloud. Które powinienem użyć?</value>
+  </data>
+  <data name="msgConflictUseLocal" xml:space="preserve">
+    <value>Lokalne</value>
+  </data>
+  <data name="msgConflictUseOD" xml:space="preserve">
+    <value>Cloud</value>
+  </data>
+  <data name="msgDeleteFromOneDrive" xml:space="preserve">
+    <value>Skasować dane z OneDrive? Jeśli tego nie zrobisz, to jak później ponownie włączysz OneDrive to dane z niego nadpiszą dane lokalne.</value>
+  </data>
+  <data name="msgDodajSklep" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
+  <data name="msgEnterName" xml:space="preserve">
+    <value>Podaj nazwę dla importowanej listy:</value>
+  </data>
+  <data name="msgExportClip" xml:space="preserve">
+    <value>Wyeksportowano Listę Zakupową do Schowka</value>
+  </data>
+  <data name="msgExportRoamToOneDrive" xml:space="preserve">
+    <value>Przesłać teraz dane do OneDrive?</value>
+  </data>
+  <data name="msgNazwaSklepu" xml:space="preserve">
+    <value>Podaj nazwę sklepu:</value>
+  </data>
+  <data name="msgNoNetworkNoOneDrive" xml:space="preserve">
+    <value>Nie można włączyć OneDrive gdy nie ma dostępnej sieci </value>
+  </data>
+  <data name="msgPrzejscDoNowego" xml:space="preserve">
+    <value>Przejść do wczytanej listy?</value>
+  </data>
+  <data name="resDlgCancel" xml:space="preserve">
+    <value>Poniechaj</value>
+  </data>
+  <data name="resDlgContinue" xml:space="preserve">
+    <value>Kontynuuj</value>
   </data>
   <data name="resDlgNo" xml:space="preserve">
-    <value>No</value>
+    <value>Nie</value>
   </data>
   <data name="resDlgYes" xml:space="preserve">
-    <value>Yes</value>
+    <value>Tak</value>
   </data>
   <data name="resPrevShopDelete" xml:space="preserve">
-    <value>Clear old list</value>
+    <value>Usuń</value>
   </data>
   <data name="resPrevShopExist" xml:space="preserve">
-    <value>Previous Shopping List with same name is present</value>
+    <value>Taka lista kiedyś istniała. Co z nią zrobić?</value>
   </data>
   <data name="resPrevShopRetain" xml:space="preserve">
-    <value>Use old list</value>
+    <value>Przywróc</value>
   </data>
-  <data name="errAnyError" xml:space="preserve">
-    <value>Some error occured</value>
-  </data>
-  <data name="uiMainSetting.Label" xml:space="preserve">
-    <value>Settings</value>
-  </data>
-  <data name="uiOneDrive.Header" xml:space="preserve">
-    <value>Use OneDrive</value>
-  </data>
-  <data name="uiSetupTitle.Text" xml:space="preserve">
-    <value>Settings</value>
-  </data>
-  <data name="uiSklepySort.Header" xml:space="preserve">
-    <value>Sort list of shops</value>
-  </data>
-  <data name="uiSklepySort.OffContent" xml:space="preserve">
-    <value>by time of adding</value>
-  </data>
-  <data name="uiSklepySort.OnContent" xml:space="preserve">
-    <value>by name</value>
-  </data>
-  <data name="uiStartImport.Content" xml:space="preserve">
-    <value>Go!</value>
+  <data name="_lang" xml:space="preserve">
+    <value>PL</value>
   </data>
 </root>

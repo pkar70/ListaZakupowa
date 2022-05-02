@@ -36,11 +36,12 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock FontSize="20" Grid.Row="0" Grid.Column="0" Text="{Binding Nazwa, Mode=OneWay }" Visibility="{Binding ShowTBlock, Mode=OneWay}" />
+                        <!--<TextBlock FontSize="20" Grid.Row="0" Grid.Column="0" Text="{Binding Nazwa, Mode=OneWay }" Visibility="{Binding ShowTBlock, Mode=OneWay}" />-->
+                        <TextBlock FontSize="20" Grid.Row="0" Grid.Column="0" Text="{Binding Nazwa, Mode=OneWay }" />
                         <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding Zalatwione, Mode=TwoWay}"  /> 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Info, Mode=OneWay }"/>
                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Cena, Mode=OneWay }"/>
-                        <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding Nazwa, Mode=TwoWay }" Visibility="{Binding ShowTBox, Mode=OneWay}"/>
+                        <!--<TextBox Grid.Row="2" Grid.Column="0" Text="{Binding Nazwa, Mode=TwoWay }" Visibility="{Binding ShowTBox, Mode=OneWay}"/>-->
 
                         <Grid.ContextFlyout>
                                 <MenuFlyout>
@@ -83,7 +84,7 @@
         <CommandBar ClosedDisplayMode="Minimal" >
             <AppBarButton Icon="Back" x:Uid="resBack" Label="Back" Click="uiGoMain_Click" />
             <AppBarButton Icon="Refresh" x:Uid="resRefresh" Label="Refresh" Click="uiRefresh_Click"  />
-            <AppBarButton Icon="Download" x:Uid="resImport" Label="Import"  AllowFocusOnInteraction="True" >
+            <!--<AppBarButton Icon="Download" x:Uid="resImport" Label="Import"  AllowFocusOnInteraction="True" >
                 <AppBarButton.Flyout>
                     <Flyout x:Name="uiImportFlyout">
                         <StackPanel>
@@ -93,8 +94,8 @@
                     </Flyout>
                 </AppBarButton.Flyout>
 
-            </AppBarButton>
-            <AppBarButton x:Name="uiExport" x:Uid="resExport" Icon="Save" Label="Export" Visibility="Collapsed" />
+            </AppBarButton>-->
+            <AppBarButton x:Name="uiExport" x:Uid="resExport" Icon="Save" Label="Export" />
             <AppBarButton x:Name="uiAdd" x:Uid="resAdd" Icon="Add" Label="Add" Click="uiAddItem_Click" />
 
         </CommandBar>

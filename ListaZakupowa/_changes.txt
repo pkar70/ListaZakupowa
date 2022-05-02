@@ -1,0 +1,21 @@
+
+2022.05.02
+* poprawki - gdy nie ma Network, OneDrive wylatuje z b³êdem, ukrywamy to; zapisy lokalne i OneDrive; sprawdzanie kolizji
+* migracja czêœci kodu typki.vb do typki.lib.vb
+
+2022.04.29 do 2022.05.01
+* VBlib, ale tylko z pkarmodule nowym, bez migracji samego kodu stron
+* doda³em obs³ugê OneDrive (wa¿niejsze pliki tam, ni¿ Roaming) - tego siê nie da daæ do VBlib
+* migracja pliku listy sklepów z XML do zwyk³ego string() - do póŸniejszej rezygnacji z XML
+* migracja plików sklepu z XML do JSON (¿eby da³o siê póŸniej przerzuciæ do strona.lib.vb)
+* strona Setup, z w³¹czaniem OneDrive, oraz sortowania listy sklepów
+* MainPage, ma ProgressRing na wczytywanie listy sklepów (jak bêzdie z OneDrive, to mo¿e potrwaæ)
+* dodawanie sklepu nie przez okienko na dole, ale na œrodku
+* sortowanie sklepów po nazwie / bez sort
+* przy w³¹czeniu OneDrive - mo¿liwoœæ eksportu plików do OneDrive
+* przenios³em import z ListaProduktow do MainPage (a kod importuj¹cy do typki.vb)
+* w zwi¹zku z przeniesieniem import, export mo¿e byæ zawsze (inaczej brakowa³o miejsca w CmdBar)
+* ca³kowicie przeorganizowanie przekazywanie listy z MainPage do ListProduktow oraz itemu z ListaProduktow do EditItem
+* lista sklepów mia³a zapis na finalize
+==RAZEM Roaming->OneDrive, first step for app also for Android, XML->JSON
+
