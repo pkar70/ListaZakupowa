@@ -1,4 +1,12 @@
 
+STORE 2022.05.10
+
+2022.05.25
+* dodanie do VBlib deflang, bez czego nie by³o w Release GetLang w ogóle!
+
+STORE 2022.05.06
+ 
+
 2022.05.02
 * poprawki - gdy nie ma Network, OneDrive wylatuje z b³êdem, ukrywamy to; zapisy lokalne i OneDrive; sprawdzanie kolizji
 * migracja czêœci kodu typki.vb do typki.lib.vb
