@@ -1,0 +1,75 @@
+
+
+* import - czy link do OneDrive jest rozwiazywany na nazwe pliku w jakis sposob?
+
+* przyjmowanie obrazka - moze byc z crop? [z AliFreebie] - ale tam jest CommunityToolkit, dopiero od 16299
+* fotka kodu paskowego [Lupka? MyCameras.Timer?]
+
+* MainPage: wyszukiwanie po nazwie (jakby bylo duzo)
+
+* Extension do JednaLokalizacja: .AsBasicGeopos ?
+
+* wyszukiwanie kart wedle bieżącej lokalizacji
+
+* karta Deichman
+
+
+MainPage:
+* lista sklepów, jako ikonki (a'la kwadraciki: image + TextBlock z nazwą, ItemsRepeater), wcześniej może lista zwykła
+* cmdbar: add, wybór wedle GPS, sync dane
+* wyszukiwanie wedle nazwy
+* context: setup sklepu, rename(?), open lista zakupowa (remote systems do UWP Shopping List), open karta, open web page
+* tap: open karta, lub menu do wyboru która karta
+
+Setup sklepu:
+* ikonka (próbuje znaleźć z nazwy sklepu ikonkę z WWW)
+* dodawanie kart dla sklepu
+* dodawanie lokalizacji
+* "jest w Shopping List", bądź sprawdzanie czy jest (inny RemSysCall (IsPresent("name")))
+* web page sklepu
+
+Dodawanie karty dla sklepu:
+* dodanie JPG/PNG
+* dodanie fotki
+* wpisanie numeru i wygenerowanie kodu paskowego
+* zeskanowanie istniejącej karty i wygenerowanie kodu (żeby był wyrazny / dokladny)
+* nazwa do karty (np. Aśka, mama)
+
+Import/export:
+* sync OneDrive/local (obrazki oraz jsony) desktop/telefon
+* wyslij link do karty (via OneDrive, via email) - nazwa karty to nazwa sklepu
+* wczytanie czyjejs karty (nazwa karty = nazwa sklepu, sufiksowana "." & odKogo)
+
+Wedle GPS:
+* własna lista lokalizacji (lat/lon/sklep)
+* wedle OpenStreetMaps POI
+
+SubMenu (więcej niż jedna)
+* karta dla sklepu
+* sklep dla lokalizacji
+
+
+Karty:
+Lidl (QR)
+Good Lood (QR)
+Rossman (BAR)
+Makro (Aśka) (BAR)
+Stokrotka (QR)
+Buczek (QR)
+Zabka
+IKEA
+Leroy
+Castorama --
+Carrefour (BAR)
+Empik (BAR)
+
+Biedronka
+
+(topmarket)
+(smaczek)
+(lewiatan)
+(eobuwie)
+
+
+
+

@@ -1,0 +1,69 @@
+﻿<Page
+    x:Class="ShopCards.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ShopCards"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded">
+
+    <UserControl.Resources>
+        <local:KonwersjaEnabledWebPage x:Key="KonwersjaEnabledWebPage"/>
+        <local:KonwersjaEnabledShowCard x:Key="KonwersjaEnabledShowCard"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Kartownik" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" />
+        <muxc:ItemsRepeaterScrollHost Grid.Row="2">
+            <ScrollViewer>
+                <muxc:ItemsRepeater Name="uiLista">
+                    <muxc:ItemsRepeater.Layout>
+                        <muxc:UniformGridLayout MinItemWidth="100"
+                                MinColumnSpacing="10"
+                                ItemsJustification="SpaceAround"/>
+                    </muxc:ItemsRepeater.Layout>
+                    <muxc:ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Image Source="{Binding sIconFilename}" Width="60" Height="60" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Row="1" Text="{Binding sName}" HorizontalAlignment="Center" />
+
+                                <Grid.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="setup sklepu" Click="uiGoShop_Click" />
+                                        <MenuFlyoutItem Text="[open lista zakupowa]" Click="uiListaZakupowa_Click"/>
+                                        <MenuFlyoutItem Text="open karta" Click="uiShowKarta_Click" IsEnabled="{Binding lKarty.Count , Converter={StaticResource KonwersjaEnabledShowCard}}"/>
+                                        <MenuFlyoutItem Text="open web" Click="uiGoWeb_Click" IsEnabled="{Binding sSklepUrl, Converter={StaticResource KonwersjaEnabledWebPage}}" />
+                                        <MenuFlyoutSeparator/>
+                                        <MenuFlyoutItem Text="delete" Click="uiDeleteSklep_Click" />
+                                    </MenuFlyout>
+                                </Grid.ContextFlyout>
+                                
+                            </Grid>
+
+                        </DataTemplate>
+                    </muxc:ItemsRepeater.ItemTemplate>
+                </muxc:ItemsRepeater>
+            </ScrollViewer>
+        </muxc:ItemsRepeaterScrollHost>
+    </Grid>
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Icon="Add" Label="Dodaj" Click="uiAddShop_Clicked" />
+            <AppBarButton Icon="Sync" Label="Sync" Name="uiSync" Click="uiSync_Clicked" />
+            <AppBarButton Icon="MapPin" Label="Wg GPS" Click="uiGPS_Clicked" />
+            <AppBarButton Icon="Setting" Label="[Setting]" Click="uiSettings_Clicked" />
+        </CommandBar>
+    </Page.BottomAppBar>
+</Page>

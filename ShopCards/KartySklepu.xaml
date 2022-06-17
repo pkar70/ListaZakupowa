@@ -1,0 +1,36 @@
+﻿<Page
+    x:Class="ShopCards.KartySklepu"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ShopCards"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded">
+
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions >
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Name="uiTytul" Grid.ColumnSpan="2" Text="nazwaSklepu" HorizontalAlignment="Center" FontSize="20" />
+        <TextBlock Name="uiSklep" Grid.Column="0" Text="nazwaSklepu" HorizontalAlignment="Center" FontSize="20" />
+        <Button Name="uiCzyja" Grid.Column="1" Content="czyjaKarta" HorizontalAlignment="Center" FontSize="18">
+            <Button.Flyout>
+                <MenuFlyout x:Name="uiMenuKart">
+                    <MenuFlyoutItem Text="alamakota" />
+                </MenuFlyout>
+            </Button.Flyout>
+        </Button>
+        <ScrollViewer ZoomMode="Enabled" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="uiScroll">
+            <Image Name="uiPicKarta" Stretch="Uniform"  />
+        </ScrollViewer>
+        <TextBlock Name="uiCardNo" Visibility="Collapsed" Grid.Row="2" Grid.ColumnSpan="2"  HorizontalAlignment="Center"  />
+    </Grid>
+</Page>
