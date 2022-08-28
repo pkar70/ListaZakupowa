@@ -143,6 +143,9 @@
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="pk_OneDrive.vb" />
     <Compile Include="pswd.vb" />
+    <Compile Include="Settings.xaml.vb">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ShowMap.xaml.vb">
       <DependentUpon>ShowMap.xaml</DependentUpon>
     </Compile>
@@ -201,6 +204,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ShowMap.xaml">
       <SubType>Designer</SubType>

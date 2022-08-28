@@ -1,4 +1,6 @@
 ﻿Imports vb14 = Vblib.pkarlibmodule14
+Imports Vblib.Extensions
+
 
 Public Class ListaSklepow
     Inherits VBlib_Karty.ListaSklepow
@@ -30,6 +32,9 @@ Public Class ListaSklepow
         End If
 
         If Await MyBase.LoadLibAsync(sODcontent, dODdate) Then Await SaveAsync()
+        ' zostało poprawione z poprzedniej wersji pliku
+
+        FillIconFileName(GetFolderIkonki.Path)
 
     End Function
 
@@ -58,5 +63,84 @@ Public Class ListaSklepow
         'End If
         Clear()
     End Sub
+
+    ''' <summary>
+    ''' Dla podanego sklepu ściąga ikonkę z WWW i daje do Cache
+    ''' </summary>
+    ''' <param name="oSklep"></param>
+    ''' <returns></returns>
+    Public Async Function SciagnijIkonke(oSklep As VBlib_Karty.JedenSklep) As Task(Of Boolean)
+
+        Dim bChanged As Boolean = False
+
+        If IO.File.Exists(oSklep.sIconPathname) Then Return bChanged
+
+        ' aktualizacja ze starej wersji pliku - sprawdzam pole które jest nowe
+        Dim sFilename As String = oSklep.sName.ToValidPath
+        sFilename &= ".icon"
+        ' operacje na nazwach
+        If oSklep.sIconUri.ToLowerInvariant.Contains(".png") Then
+            sFilename &= ".png"
+        ElseIf oSklep.sIconUri.ToLowerInvariant.Contains(".ico") Then
+            sFilename &= ".ico"
+        Else
+            ' biedronka nie ma ico/png, ale to jest .png - zresztą nazwa jest i tak chyba nieważna
+            sFilename &= ".png"
+        End If
+
+        Dim sPath As String = GetFolderIkonki.Path
+        oSklep.sIconFilename = Await SaveUriAsFileAsync(oSklep.sIconUri, sPath, sFilename)
+
+        Return True
+
+    End Function
+
+    ''' <summary>
+    '''  ściąga z sUri do pliku sPath \ sFileName, zwraca nazwę pliku lub "", gdy się nie udało
+    ''' </summary>
+    ''' <param name="sUri"></param>
+    ''' <param name="sPath"></param>
+    ''' <param name="sFileName"></param>
+    ''' <returns>nazwa pliku z ikonką (nie path!) lub "", gdy się nie udało</returns>
+    Private Async Function SaveUriAsFileAsync(sUri As String, sPath As String, sFileName As String) As Task(Of String)
+        ' ściągnięcie ikonki, wedle oSklep.sIconUri, aktualizacja sIconFilename
+        ' zwraca nazwę pliku lub "", gdy się nie udało
+
+        Dim oFold As Windows.Storage.StorageFolder = Await Windows.Storage.StorageFolder.GetFolderFromPathAsync(sPath)
+        Dim oFile As Windows.Storage.StorageFile
+
+        If IO.File.Exists(IO.Path.Combine(sPath, sFileName)) Then
+            oFile = Await oFold.TryGetItemAsync(sFileName)
+        Else
+            oFile = Await oFold.CreateFileAsync(sFileName)
+        End If
+
+        Dim oEngine As New Windows.Networking.BackgroundTransfer.BackgroundDownloader
+
+        Dim oDown = oEngine.CreateDownload(New Uri(sUri), oFile)
+        Await oDown.StartAsync
+        Return sFileName ' oFile.Path
+    End Function
+
+    ''' <summary>
+    ''' ściąga wszystkie ikonki których jeszcze ne ma
+    ''' </summary>
+    ''' <returns></returns>
+    Public Async Function DownloadMissingIcons() As Task
+        Dim bChanged As Boolean = False
+        Dim sPath As String = GetFolderIkonki.Path
+
+        For Each oSklep As VBlib_Karty.JedenSklep In App.moSklepy.GetList
+            bChanged = bChanged Or Await SciagnijIkonke(oSklep)
+        Next
+
+        If bChanged Then Await App.moSklepy.SaveAsync
+
+    End Function
+
+    Private Function GetFolderIkonki() As Windows.Storage.StorageFolder
+        Return Windows.Storage.ApplicationData.Current.LocalCacheFolder
+    End Function
+
 
 End Class

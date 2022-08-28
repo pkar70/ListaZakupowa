@@ -8,6 +8,8 @@ Public Class IniLikeDefaults
     Public Const sIniContent As String = "
 [main]
 key=value 
+uiwalkSpeed=4
+uigpsPrec=75
 
 # remark
 ' remark

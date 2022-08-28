@@ -1,12 +1,14 @@
 ﻿
 Public Class JedenSklep
     Public Property sName As String
-    Public Property sIconFilename As String
     Public Property sIconUri As String
+    Public Property sIconFilename As String
     Public Property bJestShoplist As Boolean = False
     Public Property sSklepUrl As String
     Public Property lKarty As List(Of JednaKarta)
     Public Property lLocations As List(Of JednaLocation)
+    <Newtonsoft.Json.JsonIgnore>
+    Public Property sIconPathname As String
 End Class
 
 Public Class JednaKarta
@@ -84,7 +86,11 @@ Public Class ListaSklepow
     End Function
 
     Protected Sub LoadJSON(sContent As String)
-        _Itemy = Newtonsoft.Json.JsonConvert.DeserializeObject(sContent, GetType(ObjectModel.ObservableCollection(Of JedenSklep)))
+        Try
+            _Itemy = Newtonsoft.Json.JsonConvert.DeserializeObject(sContent, GetType(ObjectModel.ObservableCollection(Of JedenSklep)))
+        Catch ex As Exception
+
+        End Try
         If _Itemy Is Nothing Then _Itemy = New ObjectModel.ObservableCollection(Of JedenSklep)
     End Sub
 
@@ -148,10 +154,49 @@ Public Class ListaSklepow
 
         LoadJSON(sContent)
 
+        KonwersjaZPoprzedniejWersji2to3()
+
         Return bShouldSave
 
     End Function
 
+    Private Sub KonwersjaZPoprzedniejWersji1to2()
+        For Each oItem As JedenSklep In _Itemy
+            If oItem.sIconUri = "" Then
+                ' stara wersja
+                oItem.sIconUri = oItem.sIconFilename
+                oItem.sIconUri = ""
+            End If
+        Next
+    End Sub
+
+    Private Sub KonwersjaZPoprzedniejWersji2to3()
+        For Each oItem As JedenSklep In _Itemy
+            Dim iInd As Integer = oItem.sIconFilename.LastIndexOf("\")
+            If iInd > 0 Then oItem.sIconFilename = oItem.sIconFilename.Substring(iInd + 1)
+        Next
+    End Sub
+
+    ''' <summary>
+    ''' tworzy sIconPathname z sCacheDir \ sIconFilename
+    ''' </summary>
+    ''' <param name="sCacheDir"></param>
+    Protected Sub FillIconFileName(sCacheDir As String)
+        For Each oItem As JedenSklep In _Itemy
+            If oItem.sIconFilename <> "" Then
+                oItem.sIconPathname = IO.Path.Combine(sCacheDir, oItem.sIconFilename)
+            End If
+        Next
+    End Sub
+
+    Public Function AnyIconMissing() As Boolean
+        For Each oItem As JedenSklep In _Itemy
+            If oItem.sIconPathname = "" Then Return True
+            If Not IO.File.Exists(oItem.sIconPathname) Then Return True
+        Next
+
+        Return False
+    End Function
 
 
 End Class

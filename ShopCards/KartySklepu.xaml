@@ -31,6 +31,6 @@
         <ScrollViewer ZoomMode="Enabled" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="uiScroll">
             <Image Name="uiPicKarta" Stretch="Uniform"  />
         </ScrollViewer>
-        <TextBlock Name="uiCardNo" Visibility="Collapsed" Grid.Row="2" Grid.ColumnSpan="2"  HorizontalAlignment="Center"  />
+        <TextBlock Name="uiCardNo" Visibility="Collapsed" Grid.Row="2" Grid.ColumnSpan="2"  HorizontalAlignment="Center" FontSize="20" />
     </Grid>
 </Page>

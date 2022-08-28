@@ -146,6 +146,8 @@ NotInheritable Class App
     Public Shared moSklepy As ListaSklepow
     Public Shared mODroot As ODfolder ' nie może być tu inicjalizowane, bo potrzebuje UI do logowania do OneDrive
 
+    Public Shared mbInScanCode As Boolean = False
+
     Public Shared Function GetJsonFolder() As Windows.Storage.StorageFolder
         Return Windows.Storage.ApplicationData.Current.RoamingFolder
     End Function
@@ -153,5 +155,7 @@ NotInheritable Class App
     Public Shared Function GetPickiFolder() As Windows.Storage.StorageFolder
         Return Windows.Storage.ApplicationData.Current.LocalFolder
     End Function
+
+    Public Shared gsLastSyncSummary As String = ""
 
 End Class

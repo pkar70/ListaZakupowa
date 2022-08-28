@@ -22,6 +22,7 @@ Public NotInheritable Class EditSklep
     Private Sub WypelnDefaultami(sName As String)
         moItem.sName = sName
         moItem.sIconFilename = ""
+        moItem.sIconPathname = ""
         moItem.sIconUri = ""
         moItem.bJestShoplist = False    ' *TODO* na razie nieobsługiwane
         moItem.sSklepUrl = "https://www." & sName & ".pl"
@@ -31,12 +32,6 @@ Public NotInheritable Class EditSklep
 
     Private Sub ShowDane()
         ' pokazanie danych na ekranie (z moItem)
-
-        If moItem.sIconUri = "" Then
-            ' stara wersja
-            moItem.sIconUri = moItem.sIconFilename
-            moItem.sIconUri = ""
-        End If
 
         uiNazwa.Text = moItem.sName
         uiIkonka.Text = moItem.sIconUri
@@ -48,7 +43,7 @@ Public NotInheritable Class EditSklep
         uiListaLokalizacji.ItemsSource = moItem.lLocations
 
 
-        Dim sIkonka As String = moItem.sIconFilename
+        Dim sIkonka As String = moItem.sIconPathname
         If sIkonka = "" Then sIkonka = moItem.sIconUri
 
         If Not String.IsNullOrEmpty(sIkonka) Then
@@ -74,7 +69,7 @@ Public NotInheritable Class EditSklep
         If mbAdding Then App.moSklepy.Add(moItem)
 
         Me.ProgRingShow(True)
-        Await MainPage.SciagnijIkonke(moItem)
+        Await App.moSklepy.SciagnijIkonke(moItem)
         Me.ProgRingShow(False)
 
         Await App.moSklepy.SaveAsync
@@ -84,6 +79,12 @@ Public NotInheritable Class EditSklep
 
     Private Async Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
         Me.ProgRingInit(True, False)
+
+        ' ZXing.Net.Mobile.Forms.WindowsUniversal.Platform.Init()
+
+        If App.mbInScanCode = True Then
+            Await vb14.DialogBoxAsync("bad return from scanning")
+        End If
 
         If String.IsNullOrEmpty(moItem.sName) Then
             Dim sName As String = Await vb14.DialogBoxInputAllDirectAsync("Podaj nazwę sklepu:", "", "OK", "Cancel")
@@ -559,24 +560,47 @@ Public NotInheritable Class EditSklep
         'Github biblioteka
         'https://github.com/nblockchain/ZXing.Net.Xamarin
 
+        App.mbInScanCode = True
+
         Dim oScanner As New ZXing.Mobile.MobileBarcodeScanner(Me.Dispatcher)
         'Tell our scanner to use the default overlay 
         oScanner.UseCustomOverlay = False
         ' //We can customize the top And bottom text of our default overlay 
         oScanner.TopText = "Hold camera up to barcode"
         oScanner.BottomText = "Camera will automatically scan barcode" & vbCrLf & "Press the 'Back' button to Cancel"
-        Dim oRes = Await oScanner.Scan()
 
-        If oRes Is Nothing Then Return
+        Dim oRes As ZXing.Result = Nothing
+        Dim sMsg As String = ""
+        oRes = Await oScanner.Scan()
+
+        'If sMsg <> "" Then
+        '    vb14.DialogBox("CATCH z oScanner.Scan: " & sMsg)
+        '    Return
+        'End If
+
+        If oRes Is Nothing Then
+            vb14.DialogBox("oScanner.Scan returned NULL")
+            Return
+        End If
 
         ' bo mi źle zeskanowało Lewiatana, więc lepiej się upewniać
-        Dim sPytanie As String = $"Sprawdź numer... ({oRes.BarcodeFormat})"
+        Dim sPytanie As String
+
+        sPytanie = $"Sprawdź numer... ({oRes.BarcodeFormat})"
+        'If sMsg <> "" Then
+        '    vb14.DialogBox("CATCH z sPytanie: " & sMsg)
+        '    Return
+        'End If
+
         Dim sNumber As String = Await vb14.DialogBoxInputAllDirectAsync(sPytanie, oRes.Text, "Ok", "Cancel")
         If sNumber = "" Then Return
 
         Await DodajKarteWedleKodu(moItem, oRes.BarcodeFormat, sNumber)
 
         ShowDane()
+
+        App.mbInScanCode = False
+
 
     End Function
 
@@ -628,7 +652,14 @@ Public NotInheritable Class EditSklep
         Dim oKarta As VBlib_Karty.JednaKarta = TryCast(oFE?.DataContext, VBlib_Karty.JednaKarta)
         If oKarta Is Nothing Then Return
 
-        If Not Await vb14.DialogBoxYNAsync("Na pewno usunąć kartę " & oKarta.sCzyja) Then Return
+        If Not Await vb14.DialogBoxYNAsync("Na pewno usunąć kartę " & oKarta.sCzyja & "?") Then Return
+
+        If oKarta.sPicFilename <> "" Then
+            If Await vb14.DialogBoxYNAsync("Usunąć jej obrazek?") Then
+                IO.File.Delete(oKarta.sPicFilename)
+            End If
+
+        End If
 
         moItem.lKarty.Remove(oKarta)
         ShowDane()

@@ -1,4 +1,7 @@
 
+DONE* inaczej ikonki - <jsonignore>iconPath, odtwarzany przy load. jesli jest plik Cache/sklep.icon.* to ok, wpisuje jego pathname. Jesli nie ma, probuje sciagnac.
+
+DONE* lastSync - i z tym sprawdzanie czy jest nowszy w OneDrive. Bo inaczej zawsze bedzie sciagane - wszak z PC send do OneDrive powoduje, ze date(plik w OD) > date(plik HDD), wiec nastepnym razem na pewno bedzie sciagniety.
 
 * import - czy link do OneDrive jest rozwiazywany na nazwe pliku w jakis sposob?
 

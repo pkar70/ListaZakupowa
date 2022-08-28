@@ -35,7 +35,12 @@ Public NotInheritable Class MainPage
             App.moSklepy = New ListaSklepow
             Me.ProgRingShow(True)
             Await App.moSklepy.LoadAsync(vb14.GetSettingsBool("uiOneDrive"))
-            Me.ProgRingShow(False)
+            If App.moSklepy.AnyIconMissing() Then
+                If Await vb14.DialogBoxYNAsync("Some icons are missing. Download?") Then
+                    Await App.moSklepy.DownloadMissingIcons()
+                End If
+            End If
+                Me.ProgRingShow(False)
         End If
 
         If msNavigatedParam <> "" Then
@@ -169,7 +174,7 @@ Public NotInheritable Class MainPage
 
 #Region "sync files"
 
-    Private Async Function CopyOneFileFromOneDriveIfNewer(oDstFolder As Windows.Storage.StorageFolder, sFilename As String) As Task(Of Boolean)
+    Private Async Function CopyOneFileFromOneDriveIfNewer(oDstFolder As Windows.Storage.StorageFolder, sFilename As String, dLastSync As DateTimeOffset) As Task(Of Boolean)
         vb14.DumpCurrMethod(sFilename & " do folderu " & oDstFolder.Path)
 
         Dim oRoamFile As Windows.Storage.StorageFile
@@ -177,23 +182,35 @@ Public NotInheritable Class MainPage
         oODfile = Await App.mODroot.GetFileAsync(sFilename)
         If oODfile Is Nothing Then
             vb14.DumpMessage("tego pliku nie ma w OneDrive")
+            App.gsLastSyncSummary &= $"Skipping {sFilename}: not exist on OD{vbCrLf}"
             Return False ' nie ma pliku w OneDrive, to go nie kopiujemy
         End If
 
         Dim oDTO As DateTimeOffset = oODfile.GetLastModDate
 
         If Not Await oDstFolder.FileExistsAsync(sFilename) Then
-            vb14.DumpMessage("nie kopiuję - tego pliku nie ma lokalnie")
-            oRoamFile = Await oDstFolder.CreateFileAsync(sFilename, Windows.Storage.CreationCollisionOption.ReplaceExisting)
+            vb14.DumpMessage("kopiuję - bo tego pliku nie ma lokalnie")
+            App.gsLastSyncSummary &= $"Downloading {sFilename}, as there is no such file locally{vbCrLf}"
         Else
+
+            If dLastSync.AddSeconds(2) > oDTO Then
+                vb14.DumpMessage("nie kopiuję bo last sync " & dLastSync.ToString & ", onedrive: " & oDTO.ToString)
+                App.gsLastSyncSummary &= $"Skipping {sFilename}, OD date is older than last sync{vbCrLf}"
+                Return False ' plik w OneDrive jest starszy niż last sync
+            End If
+
             oRoamFile = Await oDstFolder.TryGetItemAsync(sFilename)
-            Dim oRoamProp As Windows.Storage.FileProperties.BasicProperties = Await oRoamFile.GetBasicPropertiesAsync
-            If oRoamProp.DateModified.AddSeconds(2) > oODfile.GetLastModDate Then
+                Dim oRoamProp As Windows.Storage.FileProperties.BasicProperties = Await oRoamFile.GetBasicPropertiesAsync
+
+            If oRoamProp.DateModified.AddSeconds(2) > oDTO Then
+                App.gsLastSyncSummary &= $"Skipping {sFilename}, OD is older than local{vbCrLf}"
                 vb14.DumpMessage("nie kopiuję bo lokalnie " & oRoamProp.DateModified.ToString & ", onedrive: " & oDTO.ToString)
                 Return False ' plik w OneDrive jest starszy
             End If
             vb14.DumpMessage("kopiuję: lokalnie " & oRoamProp.DateModified.ToString & " < onedrive: " & oDTO.ToString)
+            App.gsLastSyncSummary &= $"Downloading {sFilename}, OD is newer than local{vbCrLf}"
         End If
+        oRoamFile = Await oDstFolder.CreateFileAsync(sFilename, Windows.Storage.CreationCollisionOption.ReplaceExisting)
 
         ' no to kopiujemy
         Using oStreamOneDrive = Await oODfile.GetStreamAsync
@@ -203,16 +220,19 @@ Public NotInheritable Class MainPage
             End Using
         End Using
 
+        Dim sPath As String = oRoamFile.Path
+        oRoamFile = Nothing ' tak, żeby plik był zamknięty, zasoby zwolnione, i w ogóle - żeby zadziałała zmiana daty
+
         ' Dim oFileProp As Windows.Storage.FileProperties.BasicProperties = Await oRoamFile.GetBasicPropertiesAsync
         ' oFileProp.DateModified = oODfile.GetLastModDate
-        IO.File.SetLastAccessTime(oRoamFile.Path, New Date(oDTO.Ticks))
+        IO.File.SetLastWriteTime(sPath, New Date(oDTO.Ticks))
 
         Return True
 
     End Function
 
-    Private Async Function CopyAllFilesFromOneDriveIfNewer() As Task
-        Dim bODnewer As Boolean = Await CopyOneFileFromOneDriveIfNewer(App.GetJsonFolder, ListaSklepow._mFileNameBase)
+    Private Async Function CopyAllFilesFromOneDriveIfNewer(dLastSync As DateTimeOffset) As Task
+        Dim bODnewer As Boolean = Await CopyOneFileFromOneDriveIfNewer(App.GetJsonFolder, ListaSklepow._mFileNameBase, dLastSync)
 
         If bODnewer Then
             ' plik jest zaktualizowany - wczytaj go na nowo
@@ -224,7 +244,7 @@ Public NotInheritable Class MainPage
             For Each oKarta As VBlib_Karty.JednaKarta In oSklep.lKarty
                 ' karta może być bez obrazka, a z generowaniem z numeru - wtedy nie ma co kopiować
                 If oKarta.sPicFilename <> "" Then
-                    Await CopyOneFileFromOneDriveIfNewer(App.GetPickiFolder, oKarta.sPicFilename)
+                    Await CopyOneFileFromOneDriveIfNewer(App.GetPickiFolder, oKarta.sPicFilename, dLastSync)
                 End If
             Next
         Next
@@ -244,17 +264,20 @@ Public NotInheritable Class MainPage
         Dim oODfile As ODfile = Await App.mODroot.GetFileAsync(sFilename)
 
         If oODfile Is Nothing Then
-            vb14.DumpMessage("nie kopiuję - tego pliku nie ma w OneDrive")
+            vb14.DumpMessage("kopiuję - tego pliku nie ma w OneDrive")
+            App.gsLastSyncSummary &= $"Uploading {sFilename}: not exist on OD{vbCrLf}"
             Await App.mODroot.CopyFileToOneDriveAsync(oRoamFile)
         Else
             Dim oRoamProp As Windows.Storage.FileProperties.BasicProperties = Await oRoamFile.GetBasicPropertiesAsync
             Dim oDTO As DateTimeOffset = oODfile.GetLastModDate
             If oRoamProp.DateModified < oODfile.GetLastModDate.AddSeconds(2) Then
+                App.gsLastSyncSummary &= $"Skipping {sFilename}, OD is newer or same as local{vbCrLf}"
                 vb14.DumpMessage("nie kopiuję bo lokalnie " & oRoamProp.DateModified.ToString & ", onedrive: " & oDTO.ToString)
                 Return ' plik w OneDrive jest nowszy
             End If
 
             vb14.DumpMessage("kopiuję: lokalnie " & oRoamProp.DateModified.ToString & " > onedrive: " & oDTO.ToString)
+            App.gsLastSyncSummary &= $"Uploading {sFilename}, OD is older than local{vbCrLf}"
             Await App.mODroot.CopyFileToOneDriveAsync(oRoamFile)
         End If
 
@@ -275,79 +298,8 @@ Public NotInheritable Class MainPage
 
     End Function
 
-    Private Async Function SciagnijIkonki() As Task
-        ' ściąga ikonki, których jeszcze nie mamy
 
 
-        Dim bChanged As Boolean = False
-        Dim sPath As String = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path
-
-        For Each oSklep As VBlib_Karty.JedenSklep In App.moSklepy.GetList
-            bChanged = bChanged Or Await SciagnijIkonke(oSklep)
-        Next
-
-        If bChanged Then Await App.moSklepy.SaveAsync
-
-    End Function
-
-    ''' <summary>
-    ''' Dla podanego sklepu ściąga ikonkę z WWW i daje do Cache
-    ''' </summary>
-    ''' <param name="oSklep"></param>
-    ''' <returns></returns>
-    Public Shared Async Function SciagnijIkonke(oSklep As VBlib_Karty.JedenSklep) As Task(Of Boolean)
-
-        Dim bChanged As Boolean = False
-
-        If oSklep.sIconUri = "" Then
-            ' stara wersja
-            oSklep.sIconUri = oSklep.sIconFilename
-            oSklep.sIconFilename = ""
-            bChanged = True
-        End If
-
-        If IO.File.Exists(oSklep.sIconFilename) Then Return bChanged
-
-        ' aktualizacja ze starej wersji pliku - sprawdzam pole które jest nowe
-        Dim sFilename As String = oSklep.sName.ToValidPath
-        sFilename &= ".icon"
-        ' operacje na nazwach
-        If oSklep.sIconUri.ToLowerInvariant.Contains(".png") Then
-            sFilename &= ".png"
-        ElseIf oSklep.sIconUri.ToLowerInvariant.Contains(".ico") Then
-            sFilename &= ".ico"
-        Else
-            ' biedronka nie ma ico/png, ale to jest .png - zresztą nazwa jest i tak chyba nieważna
-            sFilename &= ".png"
-        End If
-
-        Dim sPath As String = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path
-        oSklep.sIconFilename = Await SaveUriAsFileAsync(oSklep.sIconUri, sPath, sFilename)
-
-        Return True
-
-    End Function
-
-
-    Private Shared Async Function SaveUriAsFileAsync(sUri As String, sPath As String, sFileName As String) As Task(Of String)
-        ' ściągnięcie ikonki, wedle oSklep.sIconUri, aktualizacja sIconFilename
-        ' zwraca nazwę pliku lub "", gdy się nie udało
-
-        Dim oFold As Windows.Storage.StorageFolder = Await Windows.Storage.StorageFolder.GetFolderFromPathAsync(sPath)
-        Dim oFile As Windows.Storage.StorageFile
-
-        If IO.File.Exists(IO.Path.Combine(sPath, sFileName)) Then
-            oFile = Await oFold.TryGetItemAsync(sFileName)
-        Else
-            oFile = Await oFold.CreateFileAsync(sFileName)
-        End If
-
-        Dim oEngine As New Windows.Networking.BackgroundTransfer.BackgroundDownloader
-
-        Dim oDown = oEngine.CreateDownload(New Uri(sUri), oFile)
-        Await oDown.StartAsync
-        Return oFile.Path
-    End Function
 
 #End Region
 
@@ -359,14 +311,27 @@ Public NotInheritable Class MainPage
             Return
         End If
 
+        App.gsLastSyncSummary = "Summary of syncing @" & Date.Now.ToString("yyyy.MM.dd HH:mm") & vbCrLf & vbCrLf
+
+        Dim dLastSync As DateTimeOffset = vb14.GetSettingsDate("lastSync")
+        App.gsLastSyncSummary &= "Last sync time: " & dLastSync.ToString("yyyy.MM.dd HH:mm") & vbCrLf
+
         Me.ProgRingShow(True)
         If App.mODroot Is Nothing Then App.mODroot = Await ODclient.GetRootAsync()
-        Await CopyAllFilesFromOneDriveIfNewer()
+        App.gsLastSyncSummary &= "From OneDrive to local" & vbCrLf
+        Await CopyAllFilesFromOneDriveIfNewer(dLastSync)
+        App.gsLastSyncSummary &= $"{vbCrLf}From local to OneDrive{vbCrLf}"
         Await CopyAllFilesToOneDriveIfNewer()
-        Await SciagnijIkonki()
+        Await App.moSklepy.DownloadMissingIcons
         Me.ProgRingShow(False)
 
         PokazListe()
+
+        vb14.SetSettingsCurrentDate("lastSync")
+
+        If vb14.GetSettingsBool("uiShowSyncSummary") Then
+            Await vb14.DialogBoxAsync(App.gsLastSyncSummary)
+        End If
 
         ' sprawdź czy OD nie ma czegoś nowszego
         ' wyślij do OD wszystko
@@ -412,13 +377,13 @@ Public NotInheritable Class MainPage
     End Sub
 
     Private Sub uiSettings_Clicked(sender As Object, e As RoutedEventArgs)
-        ' *TODO* choćby on/off OneDrive, szybkość chodzenia (z czego wynika timeout cache GPS)
+        Me.Navigate(GetType(Settings))
     End Sub
 #End Region
 
     Private Shared Function GetMaxLocTime() As TimeSpan
         ' promień 100 metrów, przy podanej szybkości - ile sekund
-        Dim iSpeed As Integer = vb14.GetSettingsInt("walkSpeed", 4)
+        Dim iSpeed As Integer = vb14.GetSettingsInt("uiWalkSpeed")
         Dim dMetersPerSecond As Double = iSpeed * 1000 / 3600
 
         Return TimeSpan.FromSeconds(50 / dMetersPerSecond)
@@ -446,7 +411,7 @@ Public NotInheritable Class MainPage
 
         Dim oPos As Windows.Devices.Geolocation.Geoposition = Nothing
 
-        oDevGPS.DesiredAccuracyInMeters = vb14.GetSettingsInt("gpsPrec", 75) ' ; // dla 4 km/h; 100 m = 90 sec, 75 m = 67 sec
+        oDevGPS.DesiredAccuracyInMeters = vb14.GetSettingsInt("uiGPSPrec") ' ; // dla 4 km/h; 100 m = 90 sec, 75 m = 67 sec
         Dim sErr As String = ""
 
         Try
