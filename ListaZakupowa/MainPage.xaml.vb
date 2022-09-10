@@ -87,7 +87,7 @@ Public NotInheritable Class MainPage
 
     Private Async Sub uiAddSklep_Click(sender As Object, e As RoutedEventArgs)
 
-        Dim sName As String = Await vb14.DialogBoxResYNAsync("msgNazwaSklepu", "msgDodajSklep", "msgCancelSklep")
+        Dim sName As String = Await vb14.DialogBoxInputResAsync("msgNazwaSklepu", "", "msgDodajSklep", "msgCancelSklep")
         If sName.Length < 2 Then Exit Sub
 
         Dim oTemp As New BazaItemySklepu(sName)

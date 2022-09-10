@@ -76,11 +76,27 @@ Public NotInheritable Class EditItem
         Dim sName As String = uiAddCat.Text
         If sName.Length < 2 Then Exit Sub
 
-        Dim oCBItem As New ComboBoxItem
-        oCBItem.Content = sName
-        uiMiejsca.Items.Add(oCBItem)
+        DodajKategorie(sName)
 
         uiAddCatFlyout.Hide()
         uiAddCat.Text = ""    ' zeby nie zostawala poprzednia nazwa
+    End Sub
+
+    Private Sub DodajKategorie(sName As String)
+        If sName = "" Then Return
+        Dim oCBItem As New ComboBoxItem
+        oCBItem.Content = sName
+        uiMiejsca.Items.Add(oCBItem)
+        uiMiejsca.SelectedItem = oCBItem
+    End Sub
+
+    Private Async Sub uiCategory_Changed(sender As Object, e As SelectionChangedEventArgs)
+        Dim oSelItem As ComboBoxItem = uiMiejsca.SelectedItem
+        If oSelItem Is Nothing Then Return
+        If oSelItem.Content.ToString.StartsWith("--") Then
+            Dim sName As String = Await vb14.DialogBoxInputAllDirectAsync("Nazwa:")
+            If sName = "" Then Return
+            DodajKategorie(sName)
+        End If
     End Sub
 End Class

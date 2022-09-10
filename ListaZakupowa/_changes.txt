@@ -1,4 +1,8 @@
 
+2022.09.10
+* poprawka: by³o uzyte DialogBoxYN zamiast Input przy pod³¹czaniu nowego sklepu ;)
+* przywrócenie AddNew kategorii z Combo, nie tylko z menu
+
 STORE 2022.05.10
 
 2022.05.25

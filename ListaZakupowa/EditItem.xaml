@@ -10,13 +10,13 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel Margin="10,20,10,10">
             <TextBox x:Name="uiNazwa" HorizontalAlignment="Center" FontSize="20" />
-            <TextBlock x:Name="uiSklep" FontSize="10" />
+            <TextBlock Name="uiSklep" FontSize="10" />
             <Rectangle Height="2" HorizontalAlignment="Stretch" Margin="5,10,5,10" />
             <!-- <TextBox x:Name="uiMiejsce" Header="Miejsce"/> -->
             <TextBlock x:Uid="resMiejsce" Text="Miejsce" />
-            <ComboBox x:Name="uiMiejsca" HorizontalAlignment="Stretch" />
-            <TextBox x:Name="uiInfo" x:Uid="resInfo" Header="Info" />
-            <TextBox x:Name="uiCena" x:Uid="resCena" Header="Cena" InputScope="CurrencyAmount" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" />
+            <ComboBox Name="uiMiejsca" HorizontalAlignment="Stretch" SelectionChanged="uiCategory_Changed" />
+            <TextBox Name="uiInfo" x:Uid="resInfo" Header="Info" />
+            <TextBox Name="uiCena" x:Uid="resCena" Header="Cena" InputScope="CurrencyAmount" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" />
             <Button Content="OK" HorizontalAlignment="Center" Margin="10,20,10,0" Click="uiOK_Click"/>
         </StackPanel>
     </Grid>
