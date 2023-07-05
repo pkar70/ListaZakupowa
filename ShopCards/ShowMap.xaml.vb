@@ -12,7 +12,9 @@
 ' *TODO* Find w OSM: określenie terenu jako CurrPoint z radius 25 km?
 
 Imports vb14 = Vblib.pkarlibmodule14
-Imports Vblib.Extensions
+Imports pkar.DotNetExtensions
+Imports mygeo = pkar.BasicGeopos
+' tylko z tym przejsciem przez mygeo działa, inaczej nie widzi?
 
 
 Public NotInheritable Class ShowMap
@@ -79,8 +81,7 @@ Public NotInheritable Class ShowMap
 
         Dim oNew As New VBlib_Karty.JednaLocation
         oNew.sName = uiNazwa.Text
-        oNew.dLat = SprobujParseLat(uiLat.Text)
-        oNew.dLon = SprobujParseLon(uiLon.Text)
+        oNew.oGeo = New mygeo(SprobujParseLat(uiLat.Text), SprobujParseLon(uiLon.Text))
 
         oItem.lLocations.Add(oNew)
 
@@ -88,14 +89,11 @@ Public NotInheritable Class ShowMap
         Me.GoBack()
     End Sub
 
-    Private Sub TrySetMapCenter(oBGeo As Windows.Devices.Geolocation.BasicGeoposition)
+    Private Sub TrySetMapCenter(oGeo As mygeo)
+        Dim oBGeo As New Windows.Devices.Geolocation.BasicGeoposition
+        oBGeo.Latitude = oGeo.Latitude
+        oBGeo.Longitude = oGeo.Longitude
         uiMapka.Center = New Windows.Devices.Geolocation.Geopoint(oBGeo)
-    End Sub
-    Private Sub TrySetMapCenter(dLat As Double, dLon As Double)
-        Dim oBGeo As Windows.Devices.Geolocation.BasicGeoposition = New Windows.Devices.Geolocation.BasicGeoposition
-        oBGeo.Latitude = dLat
-        oBGeo.Longitude = dLon
-        TrySetMapCenter(oBGeo)
     End Sub
     Private Async Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
         vb14.DumpCurrMethod()
@@ -106,7 +104,7 @@ Public NotInheritable Class ShowMap
             uiGridFields.Visibility = Visibility.Collapsed
             uiNazwa.IsReadOnly = True
             uiSaveSymbol.Symbol = Symbol.Accept
-            TrySetMapCenter(moLocation.dLat, moLocation.dLon)
+            TrySetMapCenter(moLocation.oGeo)
         Else
             uiTitle.Text = "Dodawanie punktu"
             uiGridFields.Visibility = Visibility.Visible
@@ -198,7 +196,7 @@ Public NotInheritable Class ShowMap
     Private Sub uiMapka_Loaded(sender As Object, e As RoutedEventArgs)
         vb14.DumpCurrMethod()
 
-        uiMapka.Center = New Windows.Devices.Geolocation.Geopoint(GetDomekGeopos(0))
+        uiMapka.Center = mygeo.GetMyTestGeopos(0).ToWinGeopoint
 
         If moLocation IsNot Nothing Then
             If IsFamilyMobile() Then
@@ -286,7 +284,7 @@ Public NotInheritable Class ShowMap
         Dim oFE As FrameworkElement = sender
         If oFE Is Nothing Then Return
 
-        Dim oPkt As Windows.Devices.Geolocation.BasicGeoposition = oFE.DataContext
+        Dim oPkt As mygeo = oFE.DataContext
         TrySetMapCenter(oPkt)
 
     End Sub
@@ -358,9 +356,7 @@ Public NotInheritable Class ShowMap
         For Each oItem As OSMnominatim In oList
             Dim oNew As New MenuFlyoutItem
             oNew.Text = oItem.display_name
-            Dim oGeo As New Windows.Devices.Geolocation.BasicGeoposition
-            oGeo.Latitude = oItem.lat
-            oGeo.Longitude = oItem.lon
+            Dim oGeo As New mygeo(oItem.lat, oItem.lon)
             oNew.DataContext = oGeo
             AddHandler oNew.Click, AddressOf uiPOI_Click
             uiPOIlist.Items.Add(oNew)

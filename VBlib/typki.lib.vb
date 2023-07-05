@@ -1,4 +1,6 @@
 ﻿
+Imports pkar.DotNetExtensions
+
 #Region "lista sklepów"
 
 ' pierwotna wersja: plik ROAMING "int_sklepy.xml", XmlType("sklep"), z XML attr "Nazwa", 
@@ -7,6 +9,8 @@
 ' teraz import jest via XmlDoc, żeby można było jakby co to przerzucić to do vblib
 
 Public Class JedenSklep
+    Inherits pkar.BaseStruct
+
     Public Property Nazwa As String
 End Class
 
@@ -75,14 +79,14 @@ Public Class BazaSklepy
         Next
     End Sub
 
-    Private Function ExportTxt() As String
-        Dim sRet As String = ""
-        For Each oSklep As JedenSklep In _lSklepy
-            sRet = sRet & oSklep.Nazwa & vbCrLf
-        Next
+    'Private Function ExportTxt() As String
+    '    Dim sRet As String = ""
+    '    For Each oSklep As JedenSklep In _lSklepy
+    '        sRet = sRet & oSklep.Nazwa & vbCrLf
+    '    Next
 
-        Return sRet.Trim
-    End Function
+    '    Return sRet.Trim
+    'End Function
 
     'Protected Overrides Async Sub Finalize()
     '    If _bDirty Then
@@ -152,7 +156,7 @@ Public Class BazaSklepy
     ''' <returns></returns>
     Protected Function Save() As String
 
-        Dim sContent As String = ExportTxt()
+        Dim sContent As String = String.Join(vbCrLf, _lSklepy.Select(Function(x) x.Nazwa))
 
         Dim sFilename As String = IO.Path.Combine(_sRoamingRootPath, FILENAME_TXT)
         IO.File.WriteAllText(sFilename, sContent)

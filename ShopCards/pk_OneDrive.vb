@@ -168,7 +168,8 @@ Public Class ODfolder
         Dim oItem As Microsoft.OneDrive.Sdk.Item
 
         Try
-            oItem = Await _oBuilder.ItemWithPath(sFilename).Request().GetAsync
+            Dim req = _oBuilder.ItemWithPath(sFilename).Request()
+            oItem = Await req.GetAsync
             If oItem IsNot Nothing Then Return New ODfile(oItem)
         Catch
         End Try

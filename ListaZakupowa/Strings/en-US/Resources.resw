@@ -243,4 +243,10 @@
   <data name="uiStartImport.Content" xml:space="preserve">
     <value>Go!</value>
   </data>
+  <data name="msgDeleteFromOneDrive" xml:space="preserve">
+    <value>Remove data from OneDrive? If not, reconnecting to OneDrive would result in overwriting local data with data from OneDrive.</value>
+  </data>
+  <data name="msgExportRoamToOneDrive" xml:space="preserve">
+    <value>Send data to OneDrive now?</value>
+  </data>
 </root>

@@ -1,6 +1,8 @@
 ﻿Imports vb14 = Vblib.pkarlibmodule14
-Imports Vblib.Extensions
-
+Imports pkar.DotNetExtensions
+Imports Vblib
+Imports mygeo = pkar.BasicGeopos
+' tylko z tym przejsciem przez mygeo działa, inaczej nie widzi?
 
 Public NotInheritable Class MainPage
     Inherits Page
@@ -21,11 +23,11 @@ Public NotInheritable Class MainPage
         Me.ProgRingInit(True, False)
         Me.ShowAppVers
 
-        If vb14.GetSettingsBool("uiOneDrive") Then
-            Me.ProgRingShow(True)
-            If App.mODroot Is Nothing Then App.mODroot = Await ODclient.GetRootAsync()
-            Me.ProgRingShow(False)
-        End If
+        'If vb14.GetSettingsBool("uiOneDrive") AndAlso NetIsIPavailable() Then
+        '    Me.ProgRingShow(True)
+        '    If App.mODroot Is Nothing Then App.mODroot = Await ODclient.GetRootAsync()
+        '    Me.ProgRingShow(False)
+        'End If
 
         If App.moSklepy IsNot Nothing Then
             '' wróciliśmy tutaj z wizyty w sklepie, może coś się zmieniło
@@ -34,10 +36,14 @@ Public NotInheritable Class MainPage
         Else
             App.moSklepy = New ListaSklepow
             Me.ProgRingShow(True)
-            Await App.moSklepy.LoadAsync(vb14.GetSettingsBool("uiOneDrive"))
+            Await App.moSklepy.LoadAsync(False) ' vb14.GetSettingsBool("uiOneDrive") And NetIsIPavailable())
             If App.moSklepy.AnyIconMissing() Then
-                If Await vb14.DialogBoxYNAsync("Some icons are missing. Download?") Then
-                    Await App.moSklepy.DownloadMissingIcons()
+                If NetIsIPavailable() Then
+                    If Await vb14.DialogBoxYNAsync("Some icons are missing. Download?") Then
+                        Await App.moSklepy.DownloadMissingIcons()
+                    End If
+                Else
+                    Await vb14.DialogBoxAsync("Some icons are missing, but we have no Internet connection.")
                 End If
             End If
                 Me.ProgRingShow(False)
@@ -200,7 +206,7 @@ Public NotInheritable Class MainPage
             End If
 
             oRoamFile = Await oDstFolder.TryGetItemAsync(sFilename)
-                Dim oRoamProp As Windows.Storage.FileProperties.BasicProperties = Await oRoamFile.GetBasicPropertiesAsync
+            Dim oRoamProp As Windows.Storage.FileProperties.BasicProperties = Await oRoamFile.GetBasicPropertiesAsync
 
             If oRoamProp.DateModified.AddSeconds(2) > oDTO Then
                 App.gsLastSyncSummary &= $"Skipping {sFilename}, OD is older than local{vbCrLf}"
@@ -342,14 +348,13 @@ Public NotInheritable Class MainPage
         ' wybór sklepu według GPS
 
         ' w tym są permissiony
-        Dim oPos As Windows.Devices.Geolocation.BasicGeoposition? = Await GetCurrentPointAsync(10)
-        If oPos Is Nothing Then Return
+        Dim oCurrGeo As mygeo = Await GetCurrentPointAsync(10)
 
         ' szukaj w App.moSklepy
         Dim lLista As New List(Of VBlib_Karty.JedenSklep)
         For Each oSklep In App.moSklepy.GetList
             For Each oLoc In oSklep.lLocations
-                If oPos.Value.DistanceTo(oLoc.dLat, oLoc.dLon) < 50 Then
+                If oCurrGeo.DistanceTo(oLoc.oGeo) < 100 Then
                     lLista.Add(oSklep)
                     Exit For
                 End If
@@ -395,7 +400,7 @@ Public NotInheritable Class MainPage
     ''' </summary>
     ''' <param name="iSecTimeout"></param>
     ''' <returns></returns>
-    Public Shared Async Function GetCurrentPointAsync(iSecTimeout As Integer) As Task(Of Windows.Devices.Geolocation.BasicGeoposition?)
+    Public Shared Async Function GetCurrentPointAsync(iSecTimeout As Integer) As Task(Of mygeo)
 
         Dim rVal As Windows.Devices.Geolocation.GeolocationAccessStatus
         rVal = Await Windows.Devices.Geolocation.Geolocator.RequestAccessAsync()
@@ -416,7 +421,7 @@ Public NotInheritable Class MainPage
 
         Try
             oPos = Await oDevGPS.GetGeopositionAsync(GetMaxLocTime, oTimeout)
-            Return oPos.Coordinate.Point.Position
+            Return mygeo.FromObject(oPos.Coordinate.Point.Position)
 
         Catch e As Exception
             sErr = e.Message

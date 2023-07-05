@@ -1,4 +1,22 @@
 
+
+2023.03.30
+* Mainpage - wy³¹czenie korzystania z OneDrive przy uruchamianiu app i pod³¹czeniu do sieci (nic nie powinno siê zmieniæ)
+* pe³ne wykorzystanie Nuget BasicGeo
+
+2023.03.27
+* proste przejœcie na Nugety - bez pe³nego przejœcia na wszystko w Nuget co mo¿na
+
+2022.12.31
+* dla Auchan: poprawka w pkarlibmodule, bo Auchan ma utf8 zamiast utf-8
+* zabezpieczenia przed niepodaniem ikonki podczas add
+
+
+2022.12.17
+* aktualizacja vblib na wykorzystuj¹ce Nuget.NetSettings (bo symlink pkarmodule to wymusi³ :) )
+* doda³em dwa teksty do res.en (by³y tylko w PL): 'Resources/msgDeleteFromOneDrive', 'Resources/msgExportRoamToOneDrive'.
+* aktualizacja Nugetów
+
 2022.09.10
 * poprawka: by³o uzyte DialogBoxYN zamiast Input przy pod³¹czaniu nowego sklepu ;)
 * przywrócenie AddNew kategorii z Combo, nie tylko z menu

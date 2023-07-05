@@ -1,2 +1,8 @@
 
+2023.03.27
+* gdy URL jest z³y, nie robi crash przy œci¹ganiu ikonek
+* gdy nie ma Internet i jakaœ ikonka jest missing, to tylko informuje, nie proponuje œci¹gania
+* gdy plik ikonki ma len < 100 bajtów, to jest kasowany (uznawany za niepoprawny)
+
+
 START 2022.06.09 

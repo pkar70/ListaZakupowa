@@ -1,5 +1,7 @@
 ﻿Imports vb14 = Vblib.pkarlibmodule14
-Imports Vblib.Extensions
+Imports pkar.DotNetExtensions
+Imports mygeo = pkar.BasicGeopos
+' tylko z tym przejsciem przez mygeo działa, inaczej nie widzi?
 
 Public NotInheritable Class EditSklep
     Inherits Page
@@ -63,7 +65,12 @@ Public NotInheritable Class EditSklep
     Private Async Sub uiOK_Click(sender As Object, e As RoutedEventArgs)
         moItem.sName = uiNazwa.Text
         moItem.sIconUri = uiIkonka.Text
-        moItem.sSklepUrl = uiUrl.Text
+
+        If String.IsNullOrEmpty(uiIkonka.Text) Then
+            If Not Await vb14.DialogBoxResYNAsync("msgNoIconReally") Then Return
+        End If
+
+            moItem.sSklepUrl = uiUrl.Text
         moItem.bJestShoplist = uiUseZakupy.IsChecked
 
         If mbAdding Then App.moSklepy.Add(moItem)
@@ -213,8 +220,9 @@ Public NotInheritable Class EditSklep
         If oPos Is Nothing Then Return
 
         Dim oNew As New VBlib_Karty.JednaLocation
-        oNew.dLat = oPos.Value.Latitude
-        oNew.dLon = oPos.Value.Longitude
+        oNew.oGeo = mygeo.FromObject(oPos)
+        'oNew.dLat = oPos.Value.Latitude
+        'oNew.dLon = oPos.Value.Longitude
 
         oNew.sName = Await vb14.DialogBoxInputAllDirectAsync("Podaj nazwę dla punktu:")
         If oNew.sName = "" Then Return

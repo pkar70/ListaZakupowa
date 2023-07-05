@@ -1,5 +1,5 @@
 ﻿Imports vb14 = Vblib.pkarlibmodule14
-Imports Vblib.Extensions
+Imports pkar.DotNetExtensions
 
 
 Public Class ListaSklepow
@@ -70,8 +70,17 @@ Public Class ListaSklepow
     ''' <param name="oSklep"></param>
     ''' <returns></returns>
     Public Async Function SciagnijIkonke(oSklep As VBlib_Karty.JedenSklep) As Task(Of Boolean)
+        vb14.DumpCurrMethod(oSklep.sName)
+
+        ' If Not String.IsNullOrEmpty(oSklep.sIconFilename) Then Return False
+        If String.IsNullOrEmpty(oSklep.sIconUri) Then Return False
 
         Dim bChanged As Boolean = False
+
+        If IO.File.Exists(oSklep.sIconPathname) AndAlso (New IO.FileInfo(oSklep.sIconPathname)).Length < 100 Then
+            ' usuwamy pusty plik (na desktop taki jeden był,Auchan)
+            IO.File.Delete(oSklep.sIconPathname)
+        End If
 
         If IO.File.Exists(oSklep.sIconPathname) Then Return bChanged
 
@@ -91,6 +100,7 @@ Public Class ListaSklepow
         Dim sPath As String = GetFolderIkonki.Path
         oSklep.sIconFilename = Await SaveUriAsFileAsync(oSklep.sIconUri, sPath, sFilename)
 
+        If oSklep.sIconFilename = "" Then Return False  ' nie udalo sie sciagnac, to znaczy ze nie ma zmian
         Return True
 
     End Function
@@ -118,7 +128,12 @@ Public Class ListaSklepow
         Dim oEngine As New Windows.Networking.BackgroundTransfer.BackgroundDownloader
 
         Dim oDown = oEngine.CreateDownload(New Uri(sUri), oFile)
-        Await oDown.StartAsync
+
+        Try
+            Await oDown.StartAsync
+        Catch ex As Exception
+            Return ""   ' np HResult -2145844844 , znaczy że http error 404
+        End Try
         Return sFileName ' oFile.Path
     End Function
 

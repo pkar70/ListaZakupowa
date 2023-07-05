@@ -1,4 +1,16 @@
 
+przejść na Nuget structlist, może ext-settings nugetowe?
+Ale karty uzywa vblib.karty ktore uzywaja vblib (dla jednej linijki tylko, ale jednak)
+foreach na LINQ
+usercontrol
+* juz ok odczytuje ikonki, ale nie ma od razu aktualizacji na ekranie (jest stan jakby przed przeczyytaniem)
+* przyspieszyc start? 
+
+
+shopping cards, add card, bad return i crash
+shopping cards, na co jest takie dlugie czekanie
+shopping cards, desktop nie pokazuje nowych ikonek a telefon - tak (starsza wersja)
+
 DONE* inaczej ikonki - <jsonignore>iconPath, odtwarzany przy load. jesli jest plik Cache/sklep.icon.* to ok, wpisuje jego pathname. Jesli nie ma, probuje sciagnac.
 
 DONE* lastSync - i z tym sprawdzanie czy jest nowszy w OneDrive. Bo inaczej zawsze bedzie sciagane - wszak z PC send do OneDrive powoduje, ze date(plik w OD) > date(plik HDD), wiec nastepnym razem na pewno bedzie sciagniety.

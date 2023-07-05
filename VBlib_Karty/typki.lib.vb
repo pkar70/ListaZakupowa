@@ -1,4 +1,7 @@
 ﻿
+' odwolanie do Vblib potrzebne dla linii (dwukrotnie)
+' Select Case Await Vblib.SelectOneContentChoose(dODdate, dLocalDate,, Vblib.GetSettingsBool("LastSaveNoOD_" & _mFileNameBase))
+
 Public Class JedenSklep
     Public Property sName As String
     Public Property sIconUri As String
@@ -19,8 +22,9 @@ Public Class JednaKarta
 End Class
 Public Class JednaLocation
     Public Property sName As String
-    Public Property dLat As Double
-    Public Property dLon As Double
+    'Public Property dLat As Double
+    'Public Property dLon As Double
+    Public Property oGeo As pkar.BasicGeopos
 End Class
 
 Public Class ListaSklepow
@@ -34,17 +38,6 @@ Public Class ListaSklepow
         _Itemy = New ObjectModel.ObservableCollection(Of JedenSklep)
         _sRoamingFilePath = IO.Path.Combine(sRoamingRootPath, _mFileNameBase)
     End Sub
-
-    'Public Sub Add(sName As String, sMiejsce As String, sInfo As String, sCena As String)
-    '    Dim oNew As New JedenSklep With {
-    '        .Nazwa = sName,
-    '        .Cena = sCena,
-    '        .Info = sInfo,
-    '        .Miejsce = sMiejsce,
-    '        .Zalatwione = False
-    '    }
-    '    Add(oNew)
-    'End Sub
 
     Public Sub Add(oNew As JedenSklep)
         _Itemy.Add(oNew)
@@ -91,21 +84,17 @@ Public Class ListaSklepow
         Catch ex As Exception
 
         End Try
-        If _Itemy Is Nothing Then _Itemy = New ObjectModel.ObservableCollection(Of JedenSklep)
+
+        If _Itemy Is Nothing Then
+            _Itemy = New ObjectModel.ObservableCollection(Of JedenSklep)
+        Else
+            ' tu mogłoby być przetworzenie ze starej formy, dlat, dlon na mygeo; ale ponieważ app jest nieopublikowana a ja nie używam jeszcze listy sklepów...
+        End If
     End Sub
 
     Protected Function ExportJSON() As String
         Return Newtonsoft.Json.JsonConvert.SerializeObject(_Itemy, Newtonsoft.Json.Formatting.Indented)
     End Function
-
-    'Public Function Export() As String
-    '    Dim sTxt As String = ""
-    '    For Each oItem As JedenSklep In _Itemy
-    '        sTxt = sTxt & $"{oItem.Nazwa}|{oItem.Miejsce}|{oItem.Info}|{oItem.Cena}" & vbCrLf
-    '    Next
-
-    '    Return sTxt
-    'End Function
 
     ''' <summary>
     ''' zwraca tekst do zapisania do OneDrive, po zapisaniu do Roaming
