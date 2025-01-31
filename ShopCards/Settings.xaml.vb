@@ -1,12 +1,21 @@
 ﻿Imports vb14 = Vblib.pkarlibmodule14
 'Imports Vblib.Extensions
+Imports pkar.UI.Extensions
+Imports pkar.UI.Configs
 
 Public NotInheritable Class Settings
     Inherits Page
 
     Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
-        uiVersion.ShowAppVers()
-        uiLastSync.Text = "Last sync date: " & vb14.GetSettingsDate("lastSync").ToString("yyyy.MM.dd HH:mm")
+        Me.InitDialogs
+
+#If DEBUG Then
+        uiVersion.ShowAppVers(True)
+#Else
+        uiVersion.ShowAppVers(false)
+#End If
+
+        uiLastSync.Text = "Last sync date: " & vblib.GetSettingsDate("lastSync").ToString("yyyy.MM.dd HH:mm")
         uiWalkSpeed.GetSettingsInt()
         uiGPSPrec.GetSettingsInt()
         uiShowSyncSummary.GetSettingsBool()

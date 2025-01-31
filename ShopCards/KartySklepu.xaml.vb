@@ -37,7 +37,7 @@ Public NotInheritable Class KartySklepu
 
     End Sub
 
-    Private Async Function PokazKarte(oKarta As VBlib_Karty.JednaKarta) As Task
+    Private Sub PokazKarte(oKarta As VBlib_Karty.JednaKarta)
 
         uiCzyja.Content = oKarta.sCzyja
         If oKarta.sCzyja = "" Then uiCzyja.Content = "(mine)"
@@ -67,9 +67,11 @@ Public NotInheritable Class KartySklepu
             uiCardNo.Visibility = Visibility.Visible
 
         End If
-    End Function
+    End Sub
 
-    Private Async Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
+    Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
+        Me.InitDialogs
+
         If moItem.lKarty.Count = 0 Then
             uiTytul.Text = "brak kart"
             uiTytul.Visibility = Visibility.Visible
@@ -81,7 +83,7 @@ Public NotInheritable Class KartySklepu
         uiTytul.Text = moItem.sName
         uiSklep.Text = moItem.sName
 
-        Await PokazKarte(moCard)
+        PokazKarte(moCard)
 
         If moItem.lKarty.Count = 1 Then
             ' pokaż tą jedną kartę

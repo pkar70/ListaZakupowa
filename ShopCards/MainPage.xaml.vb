@@ -3,6 +3,7 @@ Imports pkar.DotNetExtensions
 Imports Vblib
 Imports mygeo = pkar.BasicGeopos
 ' tylko z tym przejsciem przez mygeo działa, inaczej nie widzi?
+Imports pkar.UI.Extensions
 
 Public NotInheritable Class MainPage
     Inherits Page
@@ -21,7 +22,13 @@ Public NotInheritable Class MainPage
 
     Private Async Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
         Me.ProgRingInit(True, False)
-        Me.ShowAppVers
+        Me.InitDialogs
+
+#If DEBUG Then
+        Me.ShowAppVers(True)
+#Else
+        me.ShowAppVers(false)
+#End If
 
         'If vb14.GetSettingsBool("uiOneDrive") AndAlso NetIsIPavailable() Then
         '    Me.ProgRingShow(True)
@@ -39,11 +46,11 @@ Public NotInheritable Class MainPage
             Await App.moSklepy.LoadAsync(False) ' vb14.GetSettingsBool("uiOneDrive") And NetIsIPavailable())
             If App.moSklepy.AnyIconMissing() Then
                 If NetIsIPavailable() Then
-                    If Await vb14.DialogBoxYNAsync("Some icons are missing. Download?") Then
+                    If Await Me.DialogBoxYNAsync("Some icons are missing. Download?") Then
                         Await App.moSklepy.DownloadMissingIcons()
                     End If
                 Else
-                    Await vb14.DialogBoxAsync("Some icons are missing, but we have no Internet connection.")
+                    Await Me.DialogBoxYNAsync("Some icons are missing, but we have no Internet connection.")
                 End If
             End If
                 Me.ProgRingShow(False)
@@ -80,7 +87,7 @@ Public NotInheritable Class MainPage
         Next
 
         If sSklepName = "" Or sCardNum = "" Or iCardType = 0 Then
-            vb14.DialogBox("Nieprawidłowy Uri aktuwyjący app")
+            Me.MsgBox("Nieprawidłowy Uri aktuwyjący app")
             Return
         End If
 
@@ -93,7 +100,7 @@ Public NotInheritable Class MainPage
         Next
 
         ' *TODO* nieznay sklep
-        vb14.DialogBox("Nie umiem dodać karty gdy nie znam sklepu - najpierw dodaj sklep")
+        Me.MsgBox("Nie umiem dodać karty gdy nie znam sklepu - najpierw dodaj sklep")
 
     End Function
 
@@ -147,7 +154,7 @@ Public NotInheritable Class MainPage
         Dim oItem As VBlib_Karty.JedenSklep = GetJedenSklep(sender)
         If oItem Is Nothing Then Return
 
-        vb14.DialogBox("tego jeszcze nie umiem")
+        Me.MsgBox("tego jeszcze nie umiem")
         ' AskConfirm
         ' via RemoteSystem - open dany sklep
     End Sub
@@ -156,7 +163,7 @@ Public NotInheritable Class MainPage
         Dim oItem As VBlib_Karty.JedenSklep = GetJedenSklep(sender)
         If oItem Is Nothing Then Return
 
-        If Not Await vb14.DialogBoxYNAsync("Sure usunąć sklep " & oItem.sName & "?") Then Return
+        If Not Await Me.DialogBoxYNAsync("Sure usunąć sklep " & oItem.sName & "?") Then Return
 
         App.moSklepy.Delete(oItem.sName)
         Me.ProgRingShow(True)
@@ -313,7 +320,7 @@ Public NotInheritable Class MainPage
         ' synchronizacja z OneDrive
 
         If Not pkar.NetIsIPavailable Then
-            vb14.DialogBox("ale nie masz sieci...")
+            Me.MsgBox("ale nie masz sieci...")
             Return
         End If
 
@@ -336,7 +343,7 @@ Public NotInheritable Class MainPage
         vb14.SetSettingsCurrentDate("lastSync")
 
         If vb14.GetSettingsBool("uiShowSyncSummary") Then
-            Await vb14.DialogBoxAsync(App.gsLastSyncSummary)
+            Await Me.MsgBoxAsync(App.gsLastSyncSummary)
         End If
 
         ' sprawdź czy OD nie ma czegoś nowszego
@@ -369,14 +376,14 @@ Public NotInheritable Class MainPage
 
         ' *TODO* jesli wiecej - stworz MenuFlyout do wyboru
         If lLista.Count > 1 Then
-            vb14.DialogBox("więcej sklepów jest tutaj - tego jeszcze nie umiem")
+            Me.MsgBox("więcej sklepów jest tutaj - tego jeszcze nie umiem")
             Return
         End If
 
         ' *TODO* jesli nie ma, to zapytaj czy uzyc OpenStreetMap
-        If Await vb14.DialogBoxYNAsync("Nie znam takiej lokalizacji, sprawdzić w OSM?") Then
+        If Await Me.DialogBoxYNAsync("Nie znam takiej lokalizacji, sprawdzić w OSM?") Then
             ' gdy tak, sciagnij POI z OSM dla point
-            vb14.DialogBox("jeszcze nie umiem obsługiwać OSM")
+            Me.MsgBox("jeszcze nie umiem obsługiwać OSM")
         End If
 
     End Sub

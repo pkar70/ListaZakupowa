@@ -15,7 +15,8 @@ Imports vb14 = Vblib.pkarlibmodule14
 Imports pkar.DotNetExtensions
 Imports mygeo = pkar.BasicGeopos
 ' tylko z tym przejsciem przez mygeo działa, inaczej nie widzi?
-
+Imports pkar.UI.Extensions
+Imports pkar
 
 Public NotInheritable Class ShowMap
     Inherits Page
@@ -43,13 +44,22 @@ Public NotInheritable Class ShowMap
     Private Async Sub uiGetGPS_Click(sender As Object, e As RoutedEventArgs)
         vb14.DumpCurrMethod()
         ProgRingShow(True)
-        Dim oPos As Windows.Devices.Geolocation.BasicGeoposition = Await MainPage.GetCurrentPointAsync(10)  ' lub default
+        Dim oPos As BasicGeopos = Await MainPage.GetCurrentPointAsync(10)  ' lub default
         ProgRingShow(False)
 
         uiLat.Text = oPos.Latitude
         uiLon.Text = oPos.Longitude
-        uiMapka.Center = New Windows.Devices.Geolocation.Geopoint(oPos)
+        uiMapka.Center = MyPosToGeopoint(oPos)
     End Sub
+
+
+    Private Function MyPosToGeopoint(oPos As BasicGeopos) As Windows.Devices.Geolocation.Geopoint
+        Dim temp As New Windows.Devices.Geolocation.BasicGeoposition
+        temp.Latitude = oPos.Latitude
+        temp.Longitude = oPos.Longitude
+
+        Return New Windows.Devices.Geolocation.Geopoint(temp)
+    End Function
 
     Private Async Sub uiAdd_Click(sender As Object, e As RoutedEventArgs)
         vb14.DumpCurrMethod()
@@ -58,23 +68,23 @@ Public NotInheritable Class ShowMap
 
         ' testy nazwy
         If uiNazwa.Text.Length < 2 Then
-            vb14.DialogBox("ale jednak jakas nazwa jest potrzebna")
+            Me.MsgBox("ale jednak jakas nazwa jest potrzebna")
             Return
         End If
         If uiNazwa.Text.Length > 60 Then
-            vb14.DialogBox("za dluga nazwa!")
+            Me.MsgBox("za dluga nazwa!")
             Return
         End If
 
         Dim oItem As VBlib_Karty.JedenSklep = App.moSklepy.GetItem(msSklepName)
         If oItem Is Nothing Then
-            vb14.DialogBox("nie ma sklepu który był wywołaniem")
+            Me.MsgBox("nie ma sklepu który był wywołaniem")
             Return
         End If
 
         For Each oLoc As VBlib_Karty.JednaLocation In oItem.lLocations
             If oLoc.sName = uiNazwa.Text Then
-                vb14.DialogBox("taka nazwa już istnieje")
+                Me.MsgBox("taka nazwa już istnieje")
                 Return
             End If
         Next
@@ -97,6 +107,7 @@ Public NotInheritable Class ShowMap
     End Sub
     Private Async Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
         vb14.DumpCurrMethod()
+        Me.InitDialogs
 
         If moLocation IsNot Nothing Then
             ' pokaż na mapie
@@ -196,7 +207,7 @@ Public NotInheritable Class ShowMap
     Private Sub uiMapka_Loaded(sender As Object, e As RoutedEventArgs)
         vb14.DumpCurrMethod()
 
-        uiMapka.Center = mygeo.GetMyTestGeopos(0).ToWinGeopoint
+        uiMapka.Center = MyPosToGeopoint(mygeo.GetMyTestGeopos(0))
 
         If moLocation IsNot Nothing Then
             If IsFamilyMobile() Then
@@ -295,7 +306,7 @@ Public NotInheritable Class ShowMap
         If Not NetIsIPavailable(True) Then Return
 
         'Me.Frame.Navigate(GetType(FindPOI))
-        Dim sTxt As String = Await vb14.DialogBoxInputDirectAsync("Co mam szukać?")
+        Dim sTxt As String = Await Me.InputBoxAsync("Co mam szukać?")
         If sTxt = "" Then Return
 
         ' wyszukanie korzystając z OpenStreetMaps
@@ -327,12 +338,12 @@ Public NotInheritable Class ShowMap
         End Try
         If sError <> "" Then
             sError = "error " & sError & ": chyba app nie ma uprawnień do Internet"
-            vb14.DialogBox(sError)
+            Me.MsgBox(sError)
             Return
         End If
 
         If Not oResp.IsSuccessStatusCode Then
-            vb14.DialogBox("ERROR: cannot get answer from nominatim.openstreetmap.org")
+            Me.MsgBox("ERROR: cannot get answer from nominatim.openstreetmap.org")
             Return
         End If
 
@@ -345,7 +356,7 @@ Public NotInheritable Class ShowMap
 
         If sError <> "" Then
             sError = "error " & sError & " at ReadAsStringAsync"
-            vb14.DialogBox(sError)
+            Me.MsgBox(sError)
             Return
         End If
 

@@ -2,6 +2,11 @@
 Imports pkar.DotNetExtensions
 Imports mygeo = pkar.BasicGeopos
 ' tylko z tym przejsciem przez mygeo działa, inaczej nie widzi?
+Imports pkar.UI.Extensions
+Imports pkar.UI.Configs
+Imports pkar
+
+
 
 Public NotInheritable Class EditSklep
     Inherits Page
@@ -67,10 +72,10 @@ Public NotInheritable Class EditSklep
         moItem.sIconUri = uiIkonka.Text
 
         If String.IsNullOrEmpty(uiIkonka.Text) Then
-            If Not Await vb14.DialogBoxResYNAsync("msgNoIconReally") Then Return
+            If Not Await Me.DialogBoxYNAsync("msgNoIconReally") Then Return
         End If
 
-            moItem.sSklepUrl = uiUrl.Text
+        moItem.sSklepUrl = uiUrl.Text
         moItem.bJestShoplist = uiUseZakupy.IsChecked
 
         If mbAdding Then App.moSklepy.Add(moItem)
@@ -86,15 +91,16 @@ Public NotInheritable Class EditSklep
 
     Private Async Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
         Me.ProgRingInit(True, False)
+        Me.InitDialogs
 
         ' ZXing.Net.Mobile.Forms.WindowsUniversal.Platform.Init()
 
         If App.mbInScanCode = True Then
-            Await vb14.DialogBoxAsync("bad return from scanning")
+            Await Me.MsgBoxAsync("bad return from scanning")
         End If
 
         If String.IsNullOrEmpty(moItem.sName) Then
-            Dim sName As String = Await vb14.DialogBoxInputAllDirectAsync("Podaj nazwę sklepu:", "", "OK", "Cancel")
+            Dim sName As String = Await Me.InputBoxAsync("Podaj nazwę sklepu:", "", "OK", "Cancel")
             If sName = "" Then Me.GoBack
             WypelnDefaultami(sName)
         End If
@@ -216,7 +222,7 @@ Public NotInheritable Class EditSklep
         ' dodaj przez GPS
 
         ' w tym są permissiony
-        Dim oPos As Windows.Devices.Geolocation.BasicGeoposition? = Await MainPage.GetCurrentPointAsync(15)
+        Dim oPos As BasicGeopos = Await MainPage.GetCurrentPointAsync(15)
         If oPos Is Nothing Then Return
 
         Dim oNew As New VBlib_Karty.JednaLocation
@@ -224,7 +230,7 @@ Public NotInheritable Class EditSklep
         'oNew.dLat = oPos.Value.Latitude
         'oNew.dLon = oPos.Value.Longitude
 
-        oNew.sName = Await vb14.DialogBoxInputAllDirectAsync("Podaj nazwę dla punktu:")
+        oNew.sName = Await Me.InputBoxAsync("Podaj nazwę dla punktu:")
         If oNew.sName = "" Then Return
 
         moItem.lLocations.Add(oNew)
@@ -246,7 +252,7 @@ Public NotInheritable Class EditSklep
 
         ' *TODO* możliwość wyboru typu kodu paskowego
 
-        Dim sNumber As String = Await vb14.DialogBoxInputAllDirectAsync("Podaj numer (EAN_13):", "", "Ok", "Cancel")
+        Dim sNumber As String = Await Me.InputBoxAsync("Podaj numer (EAN_13):", "", "Ok", "Cancel")
         If sNumber = "" Then Return
 
         Await DodajKarteWedleKodu(moItem, ZXing.BarcodeFormat.EAN_13, sNumber)
@@ -267,12 +273,12 @@ Public NotInheritable Class EditSklep
 
 
         ' zapytaj też o nazwę (czyja karta)
-        Dim sCzyja As String = Await vb14.DialogBoxInputAllDirectAsync("Czy to czyjaś karta?", "", "Tak", "Moja!")
+        Dim sCzyja As String = Await Me.InputBoxAsync("Czy to czyjaś karta?", "", "Tak", "Moja!")
 
         ' sprawdz czy karta + osoba juz istnieje
         For Each oCurrKarta As VBlib_Karty.JednaKarta In moItem.lKarty
             If oCurrKarta.sCzyja = sCzyja Then
-                If Not Await vb14.DialogBoxYNAsync("Już jest taka karta dla tej osoby, overwrite?") Then Return
+                If Not Await Me.DialogBoxYNAsync("Już jest taka karta dla tej osoby, overwrite?") Then Return
             End If
         Next
 
@@ -315,12 +321,12 @@ Public NotInheritable Class EditSklep
         If oFile Is Nothing Then Exit Sub
 
         ' zapytaj też o nazwę (czyja karta)
-        Dim sCzyja As String = Await vb14.DialogBoxInputAllDirectAsync("Czy to czyjaś karta?", "", "Tak", "Moja!")
+        Dim sCzyja As String = Await Me.InputBoxAsync("Czy to czyjaś karta?", "", "Tak", "Moja!")
 
         ' sprawdz czy karta + osoba juz istnieje
         For Each oCurrKarta As VBlib_Karty.JednaKarta In moItem.lKarty
             If oCurrKarta.sCzyja = sCzyja Then
-                If Not Await vb14.DialogBoxYNAsync("Już jest taka karta dla tej osoby, overwrite?") Then Return
+                If Not Await Me.DialogBoxYNAsync("Już jest taka karta dla tej osoby, overwrite?") Then Return
             End If
         Next
 
@@ -587,7 +593,7 @@ Public NotInheritable Class EditSklep
         'End If
 
         If oRes Is Nothing Then
-            vb14.DialogBox("oScanner.Scan returned NULL")
+            Me.MsgBox("oScanner.Scan returned NULL")
             Return
         End If
 
@@ -600,7 +606,7 @@ Public NotInheritable Class EditSklep
         '    Return
         'End If
 
-        Dim sNumber As String = Await vb14.DialogBoxInputAllDirectAsync(sPytanie, oRes.Text, "Ok", "Cancel")
+        Dim sNumber As String = Await Me.InputBoxAsync(sPytanie, oRes.Text, "Ok", "Cancel")
         If sNumber = "" Then Return
 
         Await DodajKarteWedleKodu(moItem, oRes.BarcodeFormat, sNumber)
@@ -621,13 +627,13 @@ Public NotInheritable Class EditSklep
         ' zapytaj też o nazwę (czyja karta)
         Dim sCzyja As String
         If bCzyjas Then
-            sCzyja = Await vb14.DialogBoxInputAllDirectAsync("Czyja to karta?", "", "Ok", "Cancel")
+            sCzyja = Await Vblib.InputBoxAsync("Czyja to karta?", "", "Ok", "Cancel")
         Else
-            sCzyja = Await vb14.DialogBoxInputAllDirectAsync("Czy to czyjaś karta?", "", "Tak", "Moja!")
+            sCzyja = Await Vblib.InputBoxAsync("Czy to czyjaś karta?", "", "Tak", "Moja!")
         End If
 
         If bCzyjas AndAlso sCzyja = "" Then
-            vb14.DialogBox("Karta wczytywana z zewnątrz nie może być własną (bez nazwy")
+            vb14.MsgBox("Karta wczytywana z zewnątrz nie może być własną (bez nazwy")
             Return
         End If
 
@@ -660,10 +666,10 @@ Public NotInheritable Class EditSklep
         Dim oKarta As VBlib_Karty.JednaKarta = TryCast(oFE?.DataContext, VBlib_Karty.JednaKarta)
         If oKarta Is Nothing Then Return
 
-        If Not Await vb14.DialogBoxYNAsync("Na pewno usunąć kartę " & oKarta.sCzyja & "?") Then Return
+        If Not Await Me.DialogBoxYNAsync("Na pewno usunąć kartę " & oKarta.sCzyja & "?") Then Return
 
         If oKarta.sPicFilename <> "" Then
-            If Await vb14.DialogBoxYNAsync("Usunąć jej obrazek?") Then
+            If Await Me.DialogBoxYNAsync("Usunąć jej obrazek?") Then
                 IO.File.Delete(oKarta.sPicFilename)
             End If
 
@@ -683,7 +689,7 @@ Public NotInheritable Class EditSklep
         If oKarta Is Nothing Then Return
 
         If oKarta.sNumber = "" Then
-            vb14.DialogBox("Nie umiem wysłać karty obrazkowej") ' *TODO*
+            Me.MsgBox("Nie umiem wysłać karty obrazkowej") ' *TODO*
             Return
         End If
 
@@ -720,7 +726,7 @@ Public NotInheritable Class EditSklep
 #End Region
 
 #Region "context na lokalizacji"
-    Private Async Sub uiShowOnMap_Click(sender As Object, e As RoutedEventArgs)
+    Private Sub uiShowOnMap_Click(sender As Object, e As RoutedEventArgs)
         Dim oFE As FrameworkElement = TryCast(sender, FrameworkElement)
         Dim oLoc As VBlib_Karty.JednaLocation = TryCast(oFE?.DataContext, VBlib_Karty.JednaLocation)
         If oLoc Is Nothing Then Return
